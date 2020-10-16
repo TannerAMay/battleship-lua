@@ -5,7 +5,8 @@ function ScreenManager:new()
         ["title"] = TitleScreen(),
         ["setup"] = SetupScreen(),
         ["pause"] = PauseScreen(),
-        ["game"] = GameScreen()
+        ["game"] = GameScreen(),
+        ["placement"] = PlacementScreen()
     }
     
     self.last_screen = nil

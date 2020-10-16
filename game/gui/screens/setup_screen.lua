@@ -65,7 +65,7 @@ function SetupScreen:new()
         Button(
             "Start",
             function()
-                SCREEN_MAN:changeScreen("game")
+                SCREEN_MAN:changeScreen("placement")
             end,
             440, 548, 150, 40
         )
