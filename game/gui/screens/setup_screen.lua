@@ -61,6 +61,13 @@ function SetupScreen:new()
                 self:changeDiff(true)
             end,
             2, 70, 150, 40
+        ),
+        Button(
+            "Start",
+            function()
+                SCREEN_MAN:changeScreen("placement")
+            end,
+            440, 548, 150, 40
         )
     }
 
