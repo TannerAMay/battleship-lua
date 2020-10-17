@@ -71,37 +71,40 @@ function PlacementScreen:new(gridx, gridy)
                 end
             end,
             670, 250, 125, 40
+        ),
+        Button(
+            "Start game!",
+            function()
+                SCREEN_MAN:changeScreen("game")
+            end,
+            670, 548, 125, 40
         )
     }
 end
 
 function PlacementScreen:placeShip()
-    -- If mouse is clicked, within the grid, the ship wont go off the board, and the ship hasn't been placed yet
+    -- If mouse is clicked, within the grid, the ship wont go off the board, the ship hasn't been placed yet,
+    -- and a ship is selected
     if love.mouse.isDown(1) and self.selectedX <= self.gridx and self.selectedY <= self.gridy
             and self.selectedShip ~= "none"
             and self.gridy - self.selectedY + 1 >= ships[self.selectedShip].length
             and self.gridx - self.selectedX + 1 >= ships[self.selectedShip].width
             and ships[self.selectedShip].x == -1 then
         -- Check to make sure the ship will not overlap others
-        empty = true
         for s = 0, ships[self.selectedShip].length - 1 do
             if grid[self.selectedY + s][self.selectedX] ~= "~" then
-                empty = false
-                break
+                return
             end
         end
 
-        -- If all spaces are open
-        if empty then
-            -- Set x and y in ship object
-            ships[self.selectedShip].x = self.selectedX
-            ships[self.selectedShip].y = self.selectedY
+        -- Set x and y in ship object
+        ships[self.selectedShip].x = self.selectedX
+        ships[self.selectedShip].y = self.selectedY
 
-            -- Add ship to grid
-            for l = 0, ships[self.selectedShip].length - 1 do
-                for w = 0, ships[self.selectedShip].width - 1 do
-                    grid[self.selectedY + l][self.selectedX + w] = self.selectedShip
-                end
+        -- Add ship to grid
+        for l = 0, ships[self.selectedShip].length - 1 do
+            for w = 0, ships[self.selectedShip].width - 1 do
+                grid[self.selectedY + l][self.selectedX + w] = self.selectedShip
             end
         end
     end
