@@ -17,6 +17,13 @@ function BaseShip:new(x, y, length, width, color, letter)
 
 end
 
+-- Just swaps the length and the width to "rotate" the ship
+function BaseShip:rotate()
+    local tmp = self.length
+    self.length = self.width
+    self.width = tmp
+end
+
 Carrier = BaseShip:extend()
 function Carrier:new(x, y)  -- Orange
     Carrier.super.new(self, x, y, 5, 1, {.972, .67, .266}, "c")

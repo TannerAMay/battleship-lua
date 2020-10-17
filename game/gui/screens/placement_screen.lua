@@ -22,7 +22,7 @@ function PlacementScreen:new(gridx, gridy)
 
     self.widgets = {
         Button(
-            "Carrier",  -- 5 spaces, C
+            "Carrier",
             function()
                 self.selectedShip = "c"
                 ships["c"] = Carrier(-1, -1)
@@ -30,7 +30,7 @@ function PlacementScreen:new(gridx, gridy)
             670, 25, 125, 40  -- x, y, width, height
         ),
         Button(
-            "Battleship",  -- 4 spaces
+            "Battleship",
             function()
                 self.selectedShip = "b"
                 ships["b"] = Battleship(-1, -1)
@@ -38,7 +38,7 @@ function PlacementScreen:new(gridx, gridy)
             670, 70, 125, 40
         ),
         Button(
-            "Cruiser",  -- 3 spaces
+            "Cruiser",
             function()
                 self.selectedShip = "r"
                 ships["r"] = Cruiser(-1, -1)
@@ -46,7 +46,7 @@ function PlacementScreen:new(gridx, gridy)
             670, 115, 125, 40
         ),
         Button(
-            "Submarine",  -- 3 spaces
+            "Submarine",
             function()
                 self.selectedShip = "s"
                 ships["s"] = Submarine(-1, -1)
@@ -54,12 +54,21 @@ function PlacementScreen:new(gridx, gridy)
             670, 160, 125, 40
         ),
         Button(
-            "Destroyer",  -- 2 spaces
+            "Destroyer",
             function()
                 self.selectedShip = "d"
                 ships["d"] = Destroyer(-1, -1)
             end,
             670, 205, 125, 40
+        ),
+        Button(
+            "Rotate",
+            function()
+                if self.selectedShip ~= "none" and ships[self.selectedShip].x == -1 then
+                    ships[self.selectedShip].rotate(ships[self.selectedShip])
+                end
+            end,
+            670, 250, 125, 40
         )
     }
 end
@@ -67,7 +76,9 @@ end
 function PlacementScreen:placeShip()
     -- If mouse is clicked, within the grid, the ship wont go off the board, and the ship hasn't been placed yet
     if love.mouse.isDown(1) and self.selectedX <= self.gridx and self.selectedY <= self.gridy
-            and self.gridy - self.selectedY >= ships[self.selectedShip].length and ships[self.selectedShip].x == -1 then
+            and self.gridy - self.selectedY + 1 >= ships[self.selectedShip].length
+            and self.gridx - self.selectedX + 1 >= ships[self.selectedShip].width
+            and ships[self.selectedShip].x == -1 then
         -- Check to make sure the ship will not overlap others
         empty = true
         for s = 0, ships[self.selectedShip].length - 1 do
@@ -77,14 +88,17 @@ function PlacementScreen:placeShip()
             end
         end
 
+        -- If all spaces are open
         if empty then
             -- Set x and y in ship object
             ships[self.selectedShip].x = self.selectedX
             ships[self.selectedShip].y = self.selectedY
 
             -- Add ship to grid
-            for s = 0, ships[self.selectedShip].length - 1 do
-                grid[self.selectedY + s][self.selectedX] = self.selectedShip
+            for l = 0, ships[self.selectedShip].length - 1 do
+                for w = 0, ships[self.selectedShip].width - 1 do
+                    grid[self.selectedY + l][self.selectedX + w] = self.selectedShip
+                end
             end
         end
     end
