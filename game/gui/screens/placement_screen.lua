@@ -10,7 +10,14 @@ function PlacementScreen:new(gridx, gridy)
     self.gridy = 10
     self.selectedShip = "none"
 
-    ships = {}
+    ships = {
+        ["c"] = Carrier(-1, -1),
+        ["b"] = Battleship(-1, -1),
+        ["r"] = Cruiser(-1, -1),
+        ["s"] = Submarine(-1, -1),
+        ["d"] = Destroyer(-1, -1)
+    }
+
     grid = {}
     for y = 1, self.gridy do
         grid[y] = {}
@@ -25,7 +32,6 @@ function PlacementScreen:new(gridx, gridy)
             "Carrier",
             function()
                 self.selectedShip = "c"
-                ships["c"] = Carrier(-1, -1)
             end,
             670, 25, 125, 40  -- x, y, width, height
         ),
@@ -33,7 +39,6 @@ function PlacementScreen:new(gridx, gridy)
             "Battleship",
             function()
                 self.selectedShip = "b"
-                ships["b"] = Battleship(-1, -1)
             end,
             670, 70, 125, 40
         ),
@@ -41,7 +46,6 @@ function PlacementScreen:new(gridx, gridy)
             "Cruiser",
             function()
                 self.selectedShip = "r"
-                ships["r"] = Cruiser(-1, -1)
             end,
             670, 115, 125, 40
         ),
@@ -49,7 +53,6 @@ function PlacementScreen:new(gridx, gridy)
             "Submarine",
             function()
                 self.selectedShip = "s"
-                ships["s"] = Submarine(-1, -1)
             end,
             670, 160, 125, 40
         ),
@@ -57,7 +60,6 @@ function PlacementScreen:new(gridx, gridy)
             "Destroyer",
             function()
                 self.selectedShip = "d"
-                ships["d"] = Destroyer(-1, -1)
             end,
             670, 205, 125, 40
         ),
@@ -76,6 +78,7 @@ end
 function PlacementScreen:placeShip()
     -- If mouse is clicked, within the grid, the ship wont go off the board, and the ship hasn't been placed yet
     if love.mouse.isDown(1) and self.selectedX <= self.gridx and self.selectedY <= self.gridy
+            and self.selectedShip ~= "none"
             and self.gridy - self.selectedY + 1 >= ships[self.selectedShip].length
             and self.gridx - self.selectedX + 1 >= ships[self.selectedShip].width
             and ships[self.selectedShip].x == -1 then
