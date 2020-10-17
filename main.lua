@@ -22,6 +22,8 @@ function love.load()
 
     require "game.util.util"
 
+    require "game.data.ships"
+
     SCREEN_MAN = ScreenManager()
     
     love.graphics.setFont(love.graphics.newFont(20))
