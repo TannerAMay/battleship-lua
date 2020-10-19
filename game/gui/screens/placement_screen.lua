@@ -20,6 +20,44 @@ function PlacementScreen:new(gridx, gridy)
         ["d"] = Destroyer(-1, -1)
     }
 
+    rotateSwitch = {
+        ["c"] = function()
+            if ships[self.selectedShip].width > 1 then
+                self.widgets[8].text = "H"
+            else
+                self.widgets[8].text = "V"
+            end
+        end,
+        ["b"] = function()
+            if ships[self.selectedShip].width > 1 then
+                self.widgets[9].text = "H"
+            else
+                self.widgets[9].text = "V"
+            end
+        end,
+        ["r"] = function()
+            if ships[self.selectedShip].width > 1 then
+                self.widgets[10].text = "H"
+            else
+                self.widgets[10].text = "V"
+            end
+        end,
+        ["s"] = function()
+            if ships[self.selectedShip].width > 1 then
+                self.widgets[11].text = "H"
+            else
+                self.widgets[11].text = "V"
+            end
+        end,
+        ["d"] = function()
+            if ships[self.selectedShip].width > 1 then
+                self.widgets[12].text = "H"
+            else
+                self.widgets[12].text = "V"
+            end
+        end
+    }
+
     grid = {}
     for y = 1, self.gridy do
         grid[y] = {}
@@ -31,48 +69,73 @@ function PlacementScreen:new(gridx, gridy)
 
     self.widgets = {
         Button(
-            "Carrier",
+            "Carrier (5)",
             function()
                 self.selectedShip = "c"
+
+                self:updateShipButtonColor(1)
             end,
-            670, 25, 125, 40  -- x, y, width, height
+            645, 25, 150, 40  -- x, y, width, height
         ),
         Button(
-            "Battleship",
+            "Battleship (4)",
             function()
                 self.selectedShip = "b"
+
+                self:updateShipButtonColor(2)
             end,
-            670, 70, 125, 40  -- x, y, width, height
+            645, 70, 150, 40  -- x, y, width, height
         ),
         Button(
-            "Cruiser",
+            "Cruiser (3)",
             function()
                 self.selectedShip = "r"
+
+                self:updateShipButtonColor(3)
             end,
-            670, 115, 125, 40  -- x, y, width, height
+            645, 115, 150, 40  -- x, y, width, height
         ),
         Button(
-            "Submarine",
+            "Submarine (3)",
             function()
                 self.selectedShip = "s"
+                
+                self:updateShipButtonColor(4)
             end,
-            670, 160, 125, 40  -- x, y, width, height
+            645, 160, 150, 40  -- x, y, width, height
         ),
         Button(
-            "Destroyer",
+            "Destroyer (2)",
             function()
                 self.selectedShip = "d"
+                
+                self:updateShipButtonColor(5)
             end,
-            670, 205, 125, 40  -- x, y, width, height
+            645, 205, 150, 40  -- x, y, width, height
         ),
         Button(
             "Rotate",
             function()
                 if self.selectedShip ~= "none" and ships[self.selectedShip].x == -1 then
                     ships[self.selectedShip].rotate(ships[self.selectedShip])
+                    if self.selectedShip == "c" then
+                        rotateSwitch["c"]()
+                    end
+                    if self.selectedShip == "b" then
+                        rotateSwitch["b"]()
+                    end
+                    if self.selectedShip == "r" then
+                        rotateSwitch["r"]()
+                    end
+                    if self.selectedShip == "s" then
+                        rotateSwitch["s"]()
+                    end
+                    if self.selectedShip == "d" then
+                        rotateSwitch["d"]()
+                    end
                 end
             end,
-            670, 250, 125, 40  -- x, y, width, height
+            645, 250, 150, 40  -- x, y, width, height
         ),
         Button(
             "Remove",
@@ -91,8 +154,29 @@ function PlacementScreen:new(gridx, gridy)
                     end
                 end
             end,
-            670, 295, 125, 40  -- x, y, width, height
-        )
+            645, 295, 150, 40  -- x, y, width, height
+        ),
+        Label(
+            "V",
+            625, 25, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+        ),
+        Label(
+            "V",
+            625, 70, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+        ),
+        Label(
+            "V",
+            625, 115, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+        ),
+        Label(
+            "V",
+            625, 160, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+        ),
+        Label(
+            "V",
+            625, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+        ),
+
     }
 end
 
@@ -174,4 +258,30 @@ function PlacementScreen:draw()
             )
         end
     end
+end
+
+--[[
+    Meant to update all of the ship select buttons to reflect which one is selected currently.
+
+    Parameters:
+        btnSelected - The index of the button that has a ship selected now. Should be [1-5]
+]]
+function PlacementScreen:updateShipButtonColor(btnSelected)
+    if (self.selectedShip == nil) then -- No idea how this could happen, but just in case.
+        return
+    end
+
+    local default_btn_color = {0.2, 0.2, 0.8, 1.0}
+    local ship_color = {
+        ships[self.selectedShip].color[1],
+        ships[self.selectedShip].color[2],
+        ships[self.selectedShip].color[3],
+        1.0
+    }
+
+    for i=1, 5 do
+        self.widgets[i].color = default_btn_color
+    end
+
+    self.widgets[btnSelected].color = ship_color
 end
