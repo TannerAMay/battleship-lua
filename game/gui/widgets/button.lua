@@ -37,14 +37,14 @@ end
     Events functions
 ]]
 function Button:mousepressed(x, y, button, istouch, presses)
-    if (self.enabled and checkRectCollision(x, y, self.x, self.y, self.width, self.height))
+    if (button == 1 and self.enabled and checkRectCollision(x, y, self.x, self.y, self.width, self.height))
     then
         self.selected = true
     end
 end
 
 function Button:mousereleased(x, y, button, istouch, presses)
-    if (self.enabled and checkRectCollision(x, y, self.x, self.y, self.width, self.height))
+    if (button == 1 and self.enabled and checkRectCollision(x, y, self.x, self.y, self.width, self.height))
     then
         self.on_click()
     end
