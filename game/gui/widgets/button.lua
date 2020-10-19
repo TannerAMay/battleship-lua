@@ -24,12 +24,12 @@ end
 function Button:getDrawColor()
     if (self.selected)
     then
-        return self.active_color[1], self.active_color[2], self.active_color[3], self.active_color[4]
+        return self.active_color[1], self.active_color[2], self.active_color[3], #self.active_color == 4 and self.active_color[4] or 1.0
     elseif (not self.enabled)
     then
-        return self.disabled_color[1], self.disabled_color[2], self.disabled_color[3], self.disabled_color[4]
+        return self.disabled_color[1], self.disabled_color[2], self.disabled_color[3], #self.disabled_color == 4 and self.disabled_color[4] or 1.0
     else
-        return self.color[1], self.color[2], self.color[3], self.color[4]
+        return self.color[1], self.color[2], self.color[3], #self.color == 4 and self.color[4] or 1.0
     end
 end
 

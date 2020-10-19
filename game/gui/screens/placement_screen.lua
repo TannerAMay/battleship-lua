@@ -271,17 +271,9 @@ function PlacementScreen:updateShipButtonColor(btnSelected)
         return
     end
 
-    local default_btn_color = {0.2, 0.2, 0.8, 1.0}
-    local ship_color = {
-        ships[self.selectedShip].color[1],
-        ships[self.selectedShip].color[2],
-        ships[self.selectedShip].color[3],
-        1.0
-    }
-
     for i=1, 5 do
-        self.widgets[i].color = default_btn_color
+        self.widgets[i].color = {0.2, 0.2, 0.8, 1.0}
     end
 
-    self.widgets[btnSelected].color = ship_color
+    self.widgets[btnSelected].color = ships[self.selectedShip].color
 end
