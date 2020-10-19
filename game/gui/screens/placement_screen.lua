@@ -73,6 +73,25 @@ function PlacementScreen:new(gridx, gridy)
                 end
             end,
             670, 250, 125, 40  -- x, y, width, height
+        ),
+        Button(
+            "Remove",
+            function()
+                if self.selectedShip ~= "none" then
+                    for y = 1, self.gridy do
+                        for x = 1, self.gridx do
+                            if grid[x][y] == self.selectedShip then
+                                -- clears ship id from board and sets the posistion back to the intitial state
+                                -- currently keeps current ship rotation 
+                                grid[x][y] = "~" 
+                                ships[self.selectedShip].x = -1 
+                                ships[self.selectedShip].y = -1
+                            end
+                        end
+                    end
+                end
+            end,
+            670, 295, 125, 40  -- x, y, width, height
         )
     }
 end
