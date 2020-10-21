@@ -72,12 +72,7 @@ function PlacementScreen:new(gridx, gridy)
             "Carrier (5)",
             function()
                 self.selectedShip = "c"
-
-                self.widgets[1].color = {.972, .67, .266, 1.0}
-                self.widgets[2].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[3].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[4].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[5].color = {0.2, 0.2, 0.8, 1.0}
+                self:updateShipButtonColor(1)
             end,
             645, 25, 150, 40  -- x, y, width, height
         ),
@@ -85,12 +80,7 @@ function PlacementScreen:new(gridx, gridy)
             "Battleship (4)",
             function()
                 self.selectedShip = "b"
-
-                self.widgets[2].color = {.972, .266, .603, 1.0}
-                self.widgets[1].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[3].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[4].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[5].color = {0.2, 0.2, 0.8, 1.0}
+                self:updateShipButtonColor(2)
             end,
             645, 70, 150, 40  -- x, y, width, height
         ),
@@ -98,38 +88,23 @@ function PlacementScreen:new(gridx, gridy)
             "Cruiser (3)",
             function()
                 self.selectedShip = "r"
-
-                self.widgets[3].color = {.694, .972, .266, 1.0}
-                self.widgets[1].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[2].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[4].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[5].color = {0.2, 0.2, 0.8, 1.0}
+                self:updateShipButtonColor(3)
             end,
             645, 115, 150, 40  -- x, y, width, height
         ),
         Button(
             "Submarine (3)",
             function()
-                self.selectedShip = "s"
-                
-                self.widgets[4].color = {.266, .972, .611, 1.0}
-                self.widgets[1].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[2].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[3].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[5].color = {0.2, 0.2, 0.8, 1.0}
+                self.selectedShip = "s" 
+                self:updateShipButtonColor(4)
             end,
             645, 160, 150, 40  -- x, y, width, height
         ),
         Button(
             "Destroyer (2)",
             function()
-                self.selectedShip = "d"
-                
-                self.widgets[5].color = {.960, .266, .972, 1.0}
-                self.widgets[1].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[2].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[3].color = {0.2, 0.2, 0.8, 1.0}
-                self.widgets[4].color = {0.2, 0.2, 0.8, 1.0}
+                self.selectedShip = "d"      
+                self:updateShipButtonColor(5)
             end,
             645, 205, 150, 40  -- x, y, width, height
         ),
@@ -196,6 +171,13 @@ function PlacementScreen:new(gridx, gridy)
             "V",
             625, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
+        Button(
+            "Start Game",
+            function()
+                SCREEN_MAN:changeScreen("game")
+            end,
+            645, 340, 150, 40  -- x, y, width, height
+        )
 
     }
 end
@@ -278,4 +260,30 @@ function PlacementScreen:draw()
             )
         end
     end
+end
+
+--[[
+    Meant to update all of the ship select buttons to reflect which one is selected currently.
+
+    Parameters:
+        btnSelected - The index of the button that has a ship selected now. Should be [1-5]
+]]
+function PlacementScreen:updateShipButtonColor(btnSelected)
+    if (self.selectedShip == nil) then -- No idea how this could happen, but just in case.
+        return
+    end
+
+    local default_btn_color = {0.2, 0.2, 0.8, 1.0}
+    local ship_color = {
+        ships[self.selectedShip].color[1],
+        ships[self.selectedShip].color[2],
+        ships[self.selectedShip].color[3],
+        1.0
+    }
+
+    for i=1, 5 do
+        self.widgets[i].color = default_btn_color
+    end
+
+    self.widgets[btnSelected].color = ship_color
 end
