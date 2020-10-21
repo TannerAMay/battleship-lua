@@ -69,7 +69,6 @@ function PlacementScreen:new(gridx, gridy)
             "Carrier (5)",
             function()
                 self.selectedShip = "c"
-
                 self:updateShipButtonColor(1)
             end,
             645, 25, 150, 40  -- x, y, width, height
@@ -78,7 +77,6 @@ function PlacementScreen:new(gridx, gridy)
             "Battleship (4)",
             function()
                 self.selectedShip = "b"
-
                 self:updateShipButtonColor(2)
             end,
             645, 70, 150, 40  -- x, y, width, height
@@ -87,7 +85,6 @@ function PlacementScreen:new(gridx, gridy)
             "Cruiser (3)",
             function()
                 self.selectedShip = "r"
-
                 self:updateShipButtonColor(3)
             end,
             645, 115, 150, 40  -- x, y, width, height
