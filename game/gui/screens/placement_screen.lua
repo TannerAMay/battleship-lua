@@ -6,10 +6,7 @@ function PlacementScreen:new(gridx, gridy)
     PlacementScreen.super.new(self, {0.0, 0.0, 0.0, 1.0}, nil)
 
     self.cellSize = 50
-    self.selectedX = 0
-    self.selectedY = 0
-    self.gridx = 10
-    self.gridy = 10
+    self.gridSize = 10
     self.selectedShip = "none"
 
     ships = {
@@ -20,7 +17,7 @@ function PlacementScreen:new(gridx, gridy)
         ["d"] = Destroyer(-1, -1)
     }
 
-    rotateSwitch = {
+    local rotateSwitch = {
         ["c"] = function()
             if ships[self.selectedShip].width > 1 then
                 self.widgets[8].text = "H"
@@ -59,10 +56,10 @@ function PlacementScreen:new(gridx, gridy)
     }
 
     grid = {}
-    for y = 1, self.gridy do
+    for y = 1, self.gridSize do
         grid[y] = {}
 
-        for x = 1, self.gridx do
+        for x = 1, self.gridSize do
             grid[y][x] = "~"
         end
     end
@@ -95,7 +92,8 @@ function PlacementScreen:new(gridx, gridy)
         Button(
             "Submarine (3)",
             function()
-                self.selectedShip = "s" 
+                self.selectedShip = "s"
+                
                 self:updateShipButtonColor(4)
             end,
             645, 160, 150, 40  -- x, y, width, height
@@ -103,7 +101,8 @@ function PlacementScreen:new(gridx, gridy)
         Button(
             "Destroyer (2)",
             function()
-                self.selectedShip = "d"      
+                self.selectedShip = "d"
+                
                 self:updateShipButtonColor(5)
             end,
             645, 205, 150, 40  -- x, y, width, height
@@ -136,8 +135,8 @@ function PlacementScreen:new(gridx, gridy)
             "Remove",
             function()
                 if self.selectedShip ~= "none" then
-                    for y = 1, self.gridy do
-                        for x = 1, self.gridx do
+                    for y = 1, self.gridSize do
+                        for x = 1, self.gridSize do
                             if grid[x][y] == self.selectedShip then
                                 -- clears ship id from board and sets the posistion back to the intitial state
                                 -- currently keeps current ship rotation 
@@ -171,30 +170,27 @@ function PlacementScreen:new(gridx, gridy)
             "V",
             625, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
-        Button(
-            "Start Game",
+        GameGrid(
+            0 ,0, self.cellSize, self.gridSize, grid, nil,
             function()
-                SCREEN_MAN:changeScreen("game")
-            end,
-            645, 340, 150, 40  -- x, y, width, height
+                self:newPlaceShip()
+            end
         )
 
     }
 end
 
-function PlacementScreen:placeShip()
-    -- If mouse is clicked, within the grid, the ship wont go off the board, and the ship hasn't been placed yet
-    if love.mouse.isDown(1) --mouse clicked
-            and self.selectedX <= self.gridx and self.selectedY <= self.gridy -- mouse within grid
-            and self.selectedShip ~= "none" -- a ship is actually selected to be placed
-            and self.gridy - self.selectedY + 1 >= ships[self.selectedShip].length -- the ship's length does not exit the grid
-            and self.gridx - self.selectedX + 1 >= ships[self.selectedShip].width -- the ship's width does not exit the grid
-            and ships[self.selectedShip].x == -1 then 
+function PlacementScreen:newPlaceShip()
+    local gGrid = self.widgets[13] -- Just to make code cleaner
 
-        -- Check to make sure the ship will not overlap others when placed vertically
+    if self.selectedShip ~= "none" and ships[self.selectedShip].x == -1
+        and gGrid.selectedX ~= -1 and gGrid.selectedY ~= -1
+        and gGrid.gridx - gGrid.selectedX + 1 >= ships[self.selectedShip].width
+        and gGrid.gridy - gGrid.selectedY + 1 >= ships[self.selectedShip].length
+    then
         empty = true
         for s = 0, ships[self.selectedShip].length - 1 do
-            if grid[self.selectedY + s][self.selectedX] ~= "~" then
+            if grid[gGrid.selectedY + s][gGrid.selectedX] ~= "~" then
                 empty = false
                 break
             end
@@ -202,23 +198,22 @@ function PlacementScreen:placeShip()
 
         -- Check to make sure the ship will not overlap others when placed horizontal
         for k = 0, ships[self.selectedShip].width - 1 do 
-            if grid[self.selectedY][self.selectedX + k] ~= "~" then
+            if grid[gGrid.selectedY][gGrid.selectedX + k] ~= "~" then
                 empty = false
                 break
             end
         end
 
-
         -- If all spaces are open
         if empty then
             -- Set x and y in ship object
-            ships[self.selectedShip].x = self.selectedX
-            ships[self.selectedShip].y = self.selectedY
+            ships[self.selectedShip].x = gGrid.selectedX
+            ships[self.selectedShip].y = gGrid.selectedY
 
             -- Add ship to grid
             for l = 0, ships[self.selectedShip].length - 1 do
                 for w = 0, ships[self.selectedShip].width - 1 do
-                    grid[self.selectedY + l][self.selectedX + w] = self.selectedShip
+                    grid[gGrid.selectedY + l][gGrid.selectedX + w] = self.selectedShip
                 end
             end
         end
@@ -226,40 +221,20 @@ function PlacementScreen:placeShip()
 end
 
 function PlacementScreen:update()
-    self.selectedX = math.floor(love.mouse.getX() / self.cellSize) + 1
-    self.selectedY = math.floor(love.mouse.getY() / self.cellSize) + 1
+    local mouseX = love.mouse.getX()
+    local mouseY = love.mouse.getY()
+    local gGrid = self.widgets[13]
 
-    PlacementScreen.placeShip(self)
-end
-
-function PlacementScreen:draw()
-    PlacementScreen.super.draw(self)
-
-    -- Build the grid
-    for y = 1, self.gridy do
-        for x = 1, self.gridx do
-            local cellDrawSize = self.cellSize - 1
-
-            -- Set colors for different ships and water
-            if x == self.selectedX and y == self.selectedY then
-                love.graphics.setColor(0, 1, 1)
-            elseif grid[y][x] == "~" then
-                love.graphics.setColor(.266, .529, .972)  -- Blue
-            else
-                love.graphics.setColor(ships[grid[y][x]].color[1], ships[grid[y][x]].color[2],
-                        ships[grid[y][x]].color[3])
-            end
-
-            -- Make the "pixel"
-            love.graphics.rectangle(
-                'fill',
-                (x - 1) * self.cellSize,
-                (y - 1) * self.cellSize,
-                cellDrawSize,
-                cellDrawSize
-            )
-        end
+    if (checkRectCollision(mouseX, mouseY, gGrid.x, gGrid.y, 
+        gGrid.gridx*gGrid.cellSize, gGrid.gridy*gGrid.cellSize )) then
+            gGrid.selectedX = math.floor((mouseX - gGrid.x) / gGrid.cellSize) + 1
+            gGrid.selectedY = math.floor((mouseY - gGrid.y) / gGrid.cellSize) + 1
+    else
+            gGrid.selectedX = -1
+            gGrid.selectedY = -1
     end
+
+    --PlacementScreen.placeShip(self)
 end
 
 --[[
@@ -273,17 +248,9 @@ function PlacementScreen:updateShipButtonColor(btnSelected)
         return
     end
 
-    local default_btn_color = {0.2, 0.2, 0.8, 1.0}
-    local ship_color = {
-        ships[self.selectedShip].color[1],
-        ships[self.selectedShip].color[2],
-        ships[self.selectedShip].color[3],
-        1.0
-    }
-
     for i=1, 5 do
-        self.widgets[i].color = default_btn_color
+        self.widgets[i].color = {0.2, 0.2, 0.8, 1.0}
     end
 
-    self.widgets[btnSelected].color = ship_color
+    self.widgets[btnSelected].color = ships[self.selectedShip].color
 end
