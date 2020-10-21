@@ -92,8 +92,7 @@ function PlacementScreen:new(gridx, gridy)
         Button(
             "Submarine (3)",
             function()
-                self.selectedShip = "s"
-                
+                self.selectedShip = "s" 
                 self:updateShipButtonColor(4)
             end,
             645, 160, 150, 40  -- x, y, width, height
@@ -102,7 +101,6 @@ function PlacementScreen:new(gridx, gridy)
             "Destroyer (2)",
             function()
                 self.selectedShip = "d"
-                
                 self:updateShipButtonColor(5)
             end,
             645, 205, 150, 40  -- x, y, width, height
@@ -175,6 +173,13 @@ function PlacementScreen:new(gridx, gridy)
             function()
                 self:newPlaceShip()
             end
+        ),
+        Button(
+            "Start Game",
+            function()
+                SCREEN_MAN:changeScreen("game")
+            end,
+            645, 340, 150, 40  -- x, y, width, height
         )
 
     }
@@ -189,6 +194,7 @@ function PlacementScreen:newPlaceShip()
         and gGrid.gridy - gGrid.selectedY + 1 >= ships[self.selectedShip].length
     then
         empty = true
+        -- Check to make sure the ship will not overlap others when placed vertical
         for s = 0, ships[self.selectedShip].length - 1 do
             if grid[gGrid.selectedY + s][gGrid.selectedX] ~= "~" then
                 empty = false
@@ -233,8 +239,6 @@ function PlacementScreen:update()
             gGrid.selectedX = -1
             gGrid.selectedY = -1
     end
-
-    --PlacementScreen.placeShip(self)
 end
 
 --[[
