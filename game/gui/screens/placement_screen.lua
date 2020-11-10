@@ -12,44 +12,20 @@ function PlacementScreen:new(gridx, gridy)
     self.isOneSelected = true
 
     self.selectedShip = "none"
-
-    local rotateSwitch = {
-        ["c"] = function()
-            if self:getShips()[self.selectedShip].width > 1 then
-                self.widgets[8].text = "H"
-            else
-                self.widgets[8].text = "V"
-            end
-        end,
-        ["b"] = function()
-            if self:getShips()[self.selectedShip].width > 1 then
-                self.widgets[9].text = "H"
-            else
-                self.widgets[9].text = "V"
-            end
-        end,
-        ["r"] = function()
-            if self:getShips()[self.selectedShip].width > 1 then
-                self.widgets[10].text = "H"
-            else
-                self.widgets[10].text = "V"
-            end
-        end,
-        ["s"] = function()
-            if self:getShips()[self.selectedShip].width > 1 then
-                self.widgets[11].text = "H"
-            else
-                self.widgets[11].text = "V"
-            end
-        end,
-        ["d"] = function()
-            if self:getShips()[self.selectedShip].width > 1 then
-                self.widgets[12].text = "H"
-            else
-                self.widgets[12].text = "V"
-            end
+    local rotateSwitch = function()
+        local widgetTable = {
+            ["c"] = 8,
+            ["b"] = 9,
+            ["r"] = 10,
+            ["s"] = 11,
+            ["d"] = 12
+        }
+        if self:getShips()[self.selectedShip].width > 1 then
+            self.widgets[widgetTable[self.selectedShip]].text = "H"
+        else
+            self.widgets[widgetTable[self.selectedShip]].text = "V"
         end
-    }
+    end
 
     local startBtnText = nil
     if (GAME_INFO == "PlayerComputer") then
@@ -104,21 +80,7 @@ function PlacementScreen:new(gridx, gridy)
             function()
                 if self.selectedShip ~= "none" and self:getShips()[self.selectedShip].x == -1 then
                     self:getShips()[self.selectedShip].rotate(self:getShips()[self.selectedShip])
-                    if self.selectedShip == "c" then
-                        rotateSwitch["c"]()
-                    end
-                    if self.selectedShip == "b" then
-                        rotateSwitch["b"]()
-                    end
-                    if self.selectedShip == "r" then
-                        rotateSwitch["r"]()
-                    end
-                    if self.selectedShip == "s" then
-                        rotateSwitch["s"]()
-                    end
-                    if self.selectedShip == "d" then
-                        rotateSwitch["d"]()
-                    end
+                    rotateSwitch()
                 end
             end,
             645, 250, 150, 40  -- x, y, width, height
