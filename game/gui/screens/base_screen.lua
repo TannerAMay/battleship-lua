@@ -24,7 +24,7 @@ end
 
 function BaseScreen:mousereleased(x, y, button, istouch, presses)
     for k, v in ipairs(self.widgets) do
-        if (v.mousepressed ~= nil)
+        if (v.mousereleased ~= nil)
         then
             v:mousereleased(x, y, button, istouch, presses)
         end
