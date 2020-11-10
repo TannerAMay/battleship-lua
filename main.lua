@@ -24,6 +24,8 @@ function love.load()
     require "game.util.util"
 
     require "game.data.ships"
+    GAME_INFO = require "game.data.game"
+    SETTINGS = require "game.data.settings"
 
     SCREEN_MAN = ScreenManager()
     
