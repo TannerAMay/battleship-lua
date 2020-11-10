@@ -5,9 +5,9 @@ function SetupScreen:new()
 
     self.widgets = {
         Button(
-            "Back to Title",
+            "Quit",
             function()
-                SCREEN_MAN:changeScreen("title")
+                love.event.push('quit')
             end,
             2, 548, 200, 50
         ),

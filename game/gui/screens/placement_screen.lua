@@ -180,8 +180,14 @@ function PlacementScreen:new(gridx, gridy)
                 SCREEN_MAN:changeScreen("game")
             end,
             645, 340, 150, 40  -- x, y, width, height
+        ),
+        Button(
+            "Return to setup",
+            function()
+                SCREEN_MAN:changeScreen("setup")
+            end,
+            595, 520, 200, 40  -- x, y, width, height
         )
-
     }
 end
 

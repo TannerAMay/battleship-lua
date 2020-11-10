@@ -10,7 +10,7 @@ function ScreenManager:new()
     }
     
     self.last_screen = nil
-    self:changeScreen("title")
+    self:changeScreen("setup")
 end
 
 function ScreenManager:mousepressed(x, y, button, istouch, presses)
