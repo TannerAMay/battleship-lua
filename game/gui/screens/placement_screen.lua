@@ -205,25 +205,8 @@ function PlacementScreen:newPlaceShip()
         and gGrid.gridx - gGrid.selectedX + 1 >= self:getShips()[self.selectedShip].width
         and gGrid.gridy - gGrid.selectedY + 1 >= self:getShips()[self.selectedShip].length
     then
-        empty = true
-        -- Check to make sure the ship will not overlap others when placed vertical
-        for s = 0, self:getShips()[self.selectedShip].length - 1 do
-            if self:getGrid()[gGrid.selectedY + s][gGrid.selectedX] ~= "~" then
-                empty = false
-                break
-            end
-        end
-
-        -- Check to make sure the ship will not overlap others when placed horizontal
-        for k = 0, self:getShips()[self.selectedShip].width - 1 do 
-            if self:getGrid()[gGrid.selectedY][gGrid.selectedX + k] ~= "~" then
-                empty = false
-                break
-            end
-        end
-
         -- If all spaces are open
-        if empty then
+        if canPlaceShip(gGrid.selectedX, gGrid.selectedY, self:getShips()[self.selectedShip], self:getGrid()) then
             -- Set x and y in ship object
             self:getShips()[self.selectedShip].x = gGrid.selectedX
             self:getShips()[self.selectedShip].y = gGrid.selectedY
