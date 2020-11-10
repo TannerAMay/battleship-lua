@@ -1,6 +1,6 @@
 -- This is a table because lume can serialize these easily.
 local GameInfo = {
-  ["gamemode"] = "PlayervsComputer",
+  ["gamemode"] = "PlayerComputer",
   ["isAiHardmode"] = false,
   ["isInGame"] = false,
   ["playerOne"] = {
