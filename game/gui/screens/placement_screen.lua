@@ -7,61 +7,31 @@ function PlacementScreen:new(gridx, gridy)
 
     self.cellSize = 50
     self.gridSize = 10
+
+    -- Checks if player one is the active player for placement screen
+    self.isOneSelected = true
+
     self.selectedShip = "none"
-
-    ships = {
-        ["c"] = Carrier(-1, -1),
-        ["b"] = Battleship(-1, -1),
-        ["r"] = Cruiser(-1, -1),
-        ["s"] = Submarine(-1, -1),
-        ["d"] = Destroyer(-1, -1)
-    }
-
-    local rotateSwitch = {
-        ["c"] = function()
-            if ships[self.selectedShip].width > 1 then
-                self.widgets[8].text = "H"
-            else
-                self.widgets[8].text = "V"
-            end
-        end,
-        ["b"] = function()
-            if ships[self.selectedShip].width > 1 then
-                self.widgets[9].text = "H"
-            else
-                self.widgets[9].text = "V"
-            end
-        end,
-        ["r"] = function()
-            if ships[self.selectedShip].width > 1 then
-                self.widgets[10].text = "H"
-            else
-                self.widgets[10].text = "V"
-            end
-        end,
-        ["s"] = function()
-            if ships[self.selectedShip].width > 1 then
-                self.widgets[11].text = "H"
-            else
-                self.widgets[11].text = "V"
-            end
-        end,
-        ["d"] = function()
-            if ships[self.selectedShip].width > 1 then
-                self.widgets[12].text = "H"
-            else
-                self.widgets[12].text = "V"
-            end
+    local rotateSwitch = function()
+        local widgetTable = {
+            ["c"] = 8,
+            ["b"] = 9,
+            ["r"] = 10,
+            ["s"] = 11,
+            ["d"] = 12
+        }
+        if self:getShips()[self.selectedShip].width > 1 then
+            self.widgets[widgetTable[self.selectedShip]].text = "H"
+        else
+            self.widgets[widgetTable[self.selectedShip]].text = "V"
         end
-    }
+    end
 
-    grid = {}
-    for y = 1, self.gridSize do
-        grid[y] = {}
-
-        for x = 1, self.gridSize do
-            grid[y][x] = "~"
-        end
+    local startBtnText = nil
+    if (GAME_INFO == "PlayerComputer") then
+      startBtnText = "Start Game"
+    else
+      startBtnText = "Next Player"
     end
 
     self.widgets = {
@@ -108,23 +78,9 @@ function PlacementScreen:new(gridx, gridy)
         Button(
             "Rotate",
             function()
-                if self.selectedShip ~= "none" and ships[self.selectedShip].x == -1 then
-                    ships[self.selectedShip].rotate(ships[self.selectedShip])
-                    if self.selectedShip == "c" then
-                        rotateSwitch["c"]()
-                    end
-                    if self.selectedShip == "b" then
-                        rotateSwitch["b"]()
-                    end
-                    if self.selectedShip == "r" then
-                        rotateSwitch["r"]()
-                    end
-                    if self.selectedShip == "s" then
-                        rotateSwitch["s"]()
-                    end
-                    if self.selectedShip == "d" then
-                        rotateSwitch["d"]()
-                    end
+                if self.selectedShip ~= "none" and self:getShips()[self.selectedShip].x == -1 then
+                    self:getShips()[self.selectedShip].rotate(self:getShips()[self.selectedShip])
+                    rotateSwitch()
                 end
             end,
             645, 250, 150, 40  -- x, y, width, height
@@ -133,14 +89,14 @@ function PlacementScreen:new(gridx, gridy)
             "Remove",
             function()
                 if self.selectedShip ~= "none" then
-                    for y = 1, self.gridSize do
-                        for x = 1, self.gridSize do
-                            if grid[x][y] == self.selectedShip then
+                    for y = 1, #self:getGrid() do
+                        for x = 1, #self:getGrid()[1] do
+                            if self:getGrid()[x][y] == self.selectedShip then
                                 -- clears ship id from board and sets the posistion back to the intitial state
                                 -- currently keeps current ship rotation 
-                                grid[x][y] = "~" 
-                                ships[self.selectedShip].x = -1 
-                                ships[self.selectedShip].y = -1
+                                self:getGrid()[x][y] = "~" 
+                                self:getShips()[self.selectedShip].x = -1 
+                                self:getShips()[self.selectedShip].y = -1
                             end
                         end
                     end
@@ -169,7 +125,7 @@ function PlacementScreen:new(gridx, gridy)
             625, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
         GameGrid(
-            0 ,0, self.cellSize, self.gridSize, grid, nil,
+            0 ,0, self.cellSize, self.gridSize, self:getGrid(), nil,
             function()
                 self:newPlaceShip()
             end
@@ -180,50 +136,67 @@ function PlacementScreen:new(gridx, gridy)
                 SCREEN_MAN:changeScreen("game")
             end,
             645, 340, 150, 40  -- x, y, width, height
+        ),
+        Label(
+          "Player One",
+          220, 520, 100,
+          {1.0, 1.0, 1.0, 1.0}, "center"
+        ),
+        Button(
+          ">",
+          function()
+            self:changePlayer()
+          end,
+          340, 520, 20, 50
+        ),
+        Button(
+          "<",
+          function()
+            self:changePlayer()
+          end,
+          180, 520, 20, 50
         )
-
     }
 end
 
 function PlacementScreen:newPlaceShip()
     local gGrid = self.widgets[13] -- Just to make code cleaner
 
-    if self.selectedShip ~= "none" and ships[self.selectedShip].x == -1
+    if self.selectedShip ~= "none" and self:getShips()[self.selectedShip].x == -1
         and gGrid.selectedX ~= -1 and gGrid.selectedY ~= -1
-        and gGrid.gridx - gGrid.selectedX + 1 >= ships[self.selectedShip].width
-        and gGrid.gridy - gGrid.selectedY + 1 >= ships[self.selectedShip].length
+        and gGrid.gridx - gGrid.selectedX + 1 >= self:getShips()[self.selectedShip].width
+        and gGrid.gridy - gGrid.selectedY + 1 >= self:getShips()[self.selectedShip].length
     then
-        empty = true
-        -- Check to make sure the ship will not overlap others when placed vertical
-        for s = 0, ships[self.selectedShip].length - 1 do
-            if grid[gGrid.selectedY + s][gGrid.selectedX] ~= "~" then
-                empty = false
-                break
-            end
-        end
-
-        -- Check to make sure the ship will not overlap others when placed horizontal
-        for k = 0, ships[self.selectedShip].width - 1 do 
-            if grid[gGrid.selectedY][gGrid.selectedX + k] ~= "~" then
-                empty = false
-                break
-            end
-        end
-
         -- If all spaces are open
-        if empty then
+        if canPlaceShip(gGrid.selectedX, gGrid.selectedY, self:getShips()[self.selectedShip], self:getGrid()) then
             -- Set x and y in ship object
-            ships[self.selectedShip].x = gGrid.selectedX
-            ships[self.selectedShip].y = gGrid.selectedY
+            self:getShips()[self.selectedShip].x = gGrid.selectedX
+            self:getShips()[self.selectedShip].y = gGrid.selectedY
 
             -- Add ship to grid
-            for l = 0, ships[self.selectedShip].length - 1 do
-                for w = 0, ships[self.selectedShip].width - 1 do
-                    grid[gGrid.selectedY + l][gGrid.selectedX + w] = self.selectedShip
+            for l = 0, self:getShips()[self.selectedShip].length - 1 do
+                for w = 0, self:getShips()[self.selectedShip].width - 1 do
+                    self:getGrid()[gGrid.selectedY + l][gGrid.selectedX + w] = self.selectedShip
                 end
             end
         end
     end
+end
+
+function PlacementScreen:reset()
+  if GAME_INFO["gamemode"] ~= "PlayerPlayer" then
+    self.widgets[16].visible = false
+    self.widgets[16].enabled = false
+
+    self.widgets[17].visible = false
+    self.widgets[17].enabled = false
+  else
+    self.widgets[16].visible = true
+    self.widgets[16].enabled = true
+
+    self.widgets[17].visible = true
+    self.widgets[17].enabled = true
+  end
 end
 
 function PlacementScreen:update()
@@ -256,5 +229,29 @@ function PlacementScreen:updateShipButtonColor(btnSelected)
         self.widgets[i].color = {0.2, 0.2, 0.8, 1.0}
     end
 
-    self.widgets[btnSelected].color = ships[self.selectedShip].color
+    self.widgets[btnSelected].color = self:getShips()[self.selectedShip].color
+end
+
+function PlacementScreen:changePlayer()
+  if (GAME_INFO["gamemode"] ~= "PlayerPlayer") then
+    return
+  end
+  self.isOneSelected = not (self.isOneSelected)
+
+  self.widgets[13].grid = self:getGrid()
+  self.widgets[15].text = (self.isOneSelected and "Player One") or "Player Two"
+end
+
+function PlacementScreen:getGrid()
+  if self.isOneSelected then
+    return GAME_INFO["playerOne"]["shipGrid"]
+  end
+  return GAME_INFO["playerTwo"]["shipGrid"]
+end
+
+function PlacementScreen:getShips()
+  if self.isOneSelected then
+    return GAME_INFO["playerOne"]["ships"]
+  end
+  return GAME_INFO["playerTwo"]["ships"]
 end

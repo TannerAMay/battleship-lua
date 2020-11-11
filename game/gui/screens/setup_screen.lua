@@ -65,6 +65,8 @@ function SetupScreen:new()
         Button(
             "Start",
             function()
+                GAME_INFO["isAiHardmode"] = self.hard_mode
+                GAME_INFO["gamemode"] = self.gamemode
                 SCREEN_MAN:changeScreen("placement")
             end,
             440, 548, 150, 40
