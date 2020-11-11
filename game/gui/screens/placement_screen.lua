@@ -27,13 +27,6 @@ function PlacementScreen:new(gridx, gridy)
         end
     end
 
-    local startBtnText = nil
-    if (GAME_INFO == "PlayerComputer") then
-      startBtnText = "Start Game"
-    else
-      startBtnText = "Next Player"
-    end
-
     self.widgets = {
         Button(
             "Carrier (5)",
