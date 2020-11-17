@@ -82,82 +82,12 @@ function GameScreen:placeShip()
             end
         end
     end
+
+    -- Clears selected box on grid
+    gGrid.selectedX = -1
+    gGrid.selectedY = -1
     
-    --[[
-    self.dx = love.math.random(10)
-    self.dy = love.math.random(10)
 
-    self.shipLetter = {"c", "b"}
-    for i, selectedShip in ipairs(self.shipLetter) do
-        self.dx = love.math.random(10)
-        self.dy = love.math.random(10)
-        egrid[self.dy][self.dx] = selectedShip
-         -- Check to make sure the ship will not overlap others when placed vertically
-        self.empty = true
-        for s = 0, eships[selectedShip].length - 1 do
-            if egrid[self.dy + s][self.dx] ~= "~" then
-                self.empty = false
-                break
-            end
-        end
-        -- Check to make sure the ship will not overlap others when placed horizontal
-        for k = 0, eships[selectedShip].width - 1 do 
-            if egrid[self.dy][self.dx+ k] ~= "~" then
-                self.empty = false
-                break
-            end
-        end
-        --self.empty = true
-
-        -- If all spaces are open
-         if self.empty then
-            -- Set x and y in ship object
-            eships[selectedShip].x = self.dx
-            eships[selectedShip].y = self.dy
-
-            -- Add ship to grid
-            for l = 0, eships[selectedShip].length - 1 do
-                for w = 0, eships[selectedShip].width - 1 do
-                    egrid[self.dy + l][self.dx + w] = selectedShip
-                end
-            end
-        end
-        
-    end ]]
-    --[[
-        -- Check to make sure the ship will not overlap others when placed vertically
-        empty = true
-        for s = 0, ships[self.selectedShip].length - 1 do
-            if grid[self.selectedY + s][self.selectedX] ~= "~" then
-                empty = false
-                break
-            end
-        end
-
-        -- Check to make sure the ship will not overlap others when placed horizontal
-        for k = 0, ships[self.selectedShip].width - 1 do 
-            if grid[self.selectedY][self.selectedX + k] ~= "~" then
-                empty = false
-                break
-            end
-        end
-
-
-        -- If all spaces are open
-        if empty then
-            -- Set x and y in ship object
-            ships[self.selectedShip].x = self.selectedX
-            ships[self.selectedShip].y = self.selectedY
-
-            -- Add ship to grid
-            for l = 0, ships[self.selectedShip].length - 1 do
-                for w = 0, ships[self.selectedShip].width - 1 do
-                    grid[self.selectedY + l][self.selectedX + w] = self.selectedShip
-                end
-            end
-        end
-    end
-    ]]
 end
 
 
@@ -166,17 +96,6 @@ function GameScreen:update()
     local mouseY = love.mouse.getY()
 
     local gGrid = self.widgets[1]
-
-    --[[
-    if (checkRectCollision(mouseX, mouseY, gGrid.x, gGrid.y, 
-        gGrid.gridx*gGrid.cellSize, gGrid.gridy*gGrid.cellSize )) then
-            gGrid.selectedX = math.floor((mouseX - gGrid.x) / gGrid.cellSize) + 1
-            gGrid.selectedY = math.floor((mouseY - gGrid.y) / gGrid.cellSize) + 1
-    else
-            gGrid.selectedX = -1
-            gGrid.selectedY = -1
-    end
-    ]]
 end
 
 function GameScreen:getGrid()
