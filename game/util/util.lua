@@ -16,11 +16,20 @@ end
         ship: the ship to be placed
         grid: the shipGrid to place the ship on
 ]]
+
+-- Addition of 2 to grid height/width for a quick fix to problem of not being able to place ships 
+-- within two rows of the edges
 function canPlaceShip(cellX, cellY, ship, grid)
-    if cellY + ship.length >= #grid then
+    if cellY + ship.length >= #grid + 2 then
+        --print(cellY, "  ", ship.length)
+        --print("Too Tall")
         return false
-    if cellX + ship.width >= #grid[1] then
+    end
+    if cellX + ship.width >= #grid[1] + 2 then
+        --print(cellX, "  ", ship.width)
+        --print("Too Wide")
         return false
+    end
     for dx = 0, ship.width - 1 do
         if grid[cellY][cellX + dx] ~= "~" then
             return false

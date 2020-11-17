@@ -4,39 +4,93 @@ function GameScreen:new(color, bg_image)
     GameScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
     self.cellSize = 50
+    self.gridSize = 10
     self.selectedX = 0
     self.selectedY = 0
     self.gridx = 10
     self.gridy = 10
 
-    eships = {
-        ["c"] = Carrier(-1, -1),
-        ["b"] = Battleship(-1, -1),
-        ["r"] = Cruiser(-1, -1),
-        ["s"] = Submarine(-1, -1),
-        ["d"] = Destroyer(-1, -1)
-    }
-
-    egrid = {}
-    for y = 1, self.gridy do
-        egrid[y] = {}
-
-        for x = 1, self.gridx do
-            egrid[y][x] = "~"
-        end
-    end
+    self.selectedShip = "none"
     
+
+    self.widgets = {
+        GameGrid(
+            0 ,0, self.cellSize, self.gridSize, self:getGrid(), nil,
+            function()
+                print("Clicking Works")
+            end
+        ),
+        Button(
+            "Back to Placement",
+            function()
+                SCREEN_MAN:changeScreen("placement")
+            end,
+            2, 548, 200, 50
+        ),
+    }
+    
+    self.shipProgress = 1
     GameScreen.placeShip(self)
 end
 
 function GameScreen:placeShip()
+    
+    local gGrid = self.widgets[1] -- Just to make code cleaner
+
+    local widgetTable = {
+        [1] = "c",
+        [2] = "b",
+        [3] = "r",
+        [4] = "s",
+        [5] = "d"
+    }
+
+    while self.shipProgress < 6 do
+
+        self.selectedShip = widgetTable[self.shipProgress]
+
+        --randomly assigns the posistion of each ship
+        gGrid.selectedX = love.math.random(1,10)
+        gGrid.selectedY = love.math.random(1,10)
+
+        --randomly assigns the rotation of each ship
+        self.rotation = love.math.random(1,2)
+        if self.rotation == 2 then
+            self:getShips()[self.selectedShip].rotate(self:getShips()[self.selectedShip])
+        end
+
+        if self.selectedShip ~= "none" and self:getShips()[self.selectedShip].x == -1
+            and gGrid.selectedX ~= -1 and gGrid.selectedY ~= -1
+            and gGrid.gridx - gGrid.selectedX + 1 >= self:getShips()[self.selectedShip].width
+            and gGrid.gridy - gGrid.selectedY + 1 >= self:getShips()[self.selectedShip].length
+        then
+
+            -- If all spaces are open
+            if canPlaceShip(gGrid.selectedX, gGrid.selectedY, self:getShips()[self.selectedShip], self:getGrid()) then
+                -- Set x and y in ship object
+                self:getShips()[self.selectedShip].x = gGrid.selectedX
+                self:getShips()[self.selectedShip].y = gGrid.selectedY
+                self.shipProgress = self.shipProgress + 1
+
+                -- Add ship to grid
+                for l = 0, self:getShips()[self.selectedShip].length - 1 do
+                    for w = 0, self:getShips()[self.selectedShip].width - 1 do
+                        self:getGrid()[gGrid.selectedY + l][gGrid.selectedX + w] = self.selectedShip
+                        
+                    end
+                end
+            end
+        end
+    end
+    
+    --[[
     self.dx = love.math.random(10)
     self.dy = love.math.random(10)
 
-    self.shipLetter = {"c"}
+    self.shipLetter = {"c", "b"}
     for i, selectedShip in ipairs(self.shipLetter) do
-        self.dx = love.math.random(1,10)
-        self.dy = love.math.random(1,10)
+        self.dx = love.math.random(10)
+        self.dy = love.math.random(10)
         egrid[self.dy][self.dx] = selectedShip
          -- Check to make sure the ship will not overlap others when placed vertically
         self.empty = true
@@ -68,8 +122,8 @@ function GameScreen:placeShip()
                 end
             end
         end
-
-    end
+        
+    end ]]
     --[[
         -- Check to make sure the ship will not overlap others when placed vertically
         empty = true
@@ -108,42 +162,27 @@ end
 
 
 function GameScreen:update()
-    self.selectedX = math.floor(love.mouse.getX() / self.cellSize) + 1
-    self.selectedY = math.floor(love.mouse.getY() / self.cellSize) + 1
-end
+    local mouseX = love.mouse.getX()
+    local mouseY = love.mouse.getY()
 
-function GameScreen:draw()
-    GameScreen.super.draw(self)
+    local gGrid = self.widgets[1]
 
-    -- Build the grid
-    for y = 1, self.gridy do
-        for x = 1, self.gridx do
-            local cellDrawSize = self.cellSize - 1
-
-            -- Set colors for different ships and water
-            if x == self.selectedX and y == self.selectedY then
-                love.graphics.setColor(0, 1, 1)
-            elseif egrid[y][x] == "~" then
-                love.graphics.setColor(.266, .529, .972)  -- Blue
-            else
-                love.graphics.setColor(eships[egrid[y][x]].color[1], eships[egrid[y][x]].color[2],
-                        eships[egrid[y][x]].color[3])
-            end
-
-            -- Make the "pixel"
-            love.graphics.rectangle(
-                'fill',
-                (x - 1) * self.cellSize,
-                (y - 1) * self.cellSize,
-                cellDrawSize,
-                cellDrawSize
-            )
-            
-
-            love.graphics.setColor(0,0,0)
-            --love.graphics.print('selected x: '..self.selectedX..' selected y: '..self.selectedY..' dx: '..self.dx..' dy: '..self.dy)
-            love.graphics.print(egrid[y][x])
-            love.graphics.setColor(1,1,1)
-        end
+    --[[
+    if (checkRectCollision(mouseX, mouseY, gGrid.x, gGrid.y, 
+        gGrid.gridx*gGrid.cellSize, gGrid.gridy*gGrid.cellSize )) then
+            gGrid.selectedX = math.floor((mouseX - gGrid.x) / gGrid.cellSize) + 1
+            gGrid.selectedY = math.floor((mouseY - gGrid.y) / gGrid.cellSize) + 1
+    else
+            gGrid.selectedX = -1
+            gGrid.selectedY = -1
     end
+    ]]
 end
+
+function GameScreen:getGrid()
+    return GAME_INFO["computer"]["shipGrid"]
+end
+
+function GameScreen:getShips()
+    return GAME_INFO["computer"]["ships"]
+  end
