@@ -81,8 +81,8 @@ function GameGrid:draw()
             -- Make the "pixel"
             love.graphics.rectangle(
                 'fill',
-                (x - 1) * self.cellSize,
-                (y - 1) * self.cellSize,
+                self.x + (x - 1) * self.cellSize,
+                self.y + (y - 1) * self.cellSize,
                 cellDrawSize,
                 cellDrawSize
             )
