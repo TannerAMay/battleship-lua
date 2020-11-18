@@ -102,6 +102,14 @@ function PlayScreen:new(color, bg_image)
             saveGame() -- TODO Add the error checking here.
           end,
           540, 588, 200, 50
+        ),
+        Button(
+            "Skip to ending screen",
+            function()
+                GAME_INFO["playerTwo"]["health"] = 0
+                SCREEN_MAN:changeScreen("ending")
+            end,
+            740,588,200,50
         )
     }
 end

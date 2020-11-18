@@ -1,5 +1,6 @@
 local saveFileName = "saveGame.data"
 local settingsFileName = "settings.data"
+local baseFileName = "baseGame.data"
 
 function checkRectCollision(checkX, checkY, x, y, width, height)
     if (checkX < x or checkX > x+width or checkY < y or checkY > y + height)
@@ -101,4 +102,11 @@ function loadGame()
 
     return error
   end
+end
+
+function newGame()
+    contents, error = love.filesystem.read(baseFileName)
+    print(contents)
+    GAME_INFO = Lume.deserialize(contents)
+    print("Starting New Game")
 end
