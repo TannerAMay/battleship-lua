@@ -37,7 +37,7 @@ function GameScreen:new(color, bg_image)
     }
     
     self.shipProgress = 1
-    GameScreen.placeShip(self)
+    --GameScreen.placeShip(self)
 end
 
 function GameScreen:placeShip()
