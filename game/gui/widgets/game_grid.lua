@@ -39,7 +39,7 @@ function GameGrid:new(x, y, cellSize, gridSize, grid, hitGrid, onClick)
 
     if (not self.hitGrid) then
         self:initHitgrid()
-        print("WARNING: GameGrid not actually connected to a pre-existing hitgrid. Changes may not do anything.")
+        --print("WARNING: GameGrid not actually connected to a pre-existing hitgrid. Changes may not do anything.")
     end
 end
 

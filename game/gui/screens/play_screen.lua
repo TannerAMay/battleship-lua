@@ -29,8 +29,47 @@ function PlayScreen:new(color, bg_image)
                 local opponent = "playerTwo"
                 self.fired = false
 
-                self:swapToOpponent()
-                GAME_INFO["isPlayerOneTurn"] = not GAME_INFO["isPlayerOneTurn"]
+                --  Switch players
+                if not GAME_INFO["isPlayerOneTurn"] then
+                    opponent = "playerOne"
+                    GAME_INFO["isPlayerOneTurn"] = true
+                else
+                    GAME_INFO["isPlayerOneTurn"] = false
+                end
+
+                -- Make AI Shoot
+                if GAME_INFO["gamemode"] == "ComputerComputer"
+                    or (not GAME_INFO["isPlayerOneTurn"] and GAME_INFO["gamemode"] == "PlayerComputer")
+                then
+                    self:fire()
+                    self.fired = false
+
+                    -- Do not switch to opponent AI grid if human vs comp
+                    if GAME_INFO["gamemode"] ~= "ComputerComputer" then
+                        if not GAME_INFO["isPlayerOneTurn"] then
+                            opponent = "playerOne"
+                            GAME_INFO["isPlayerOneTurn"] = true
+                        else
+                            GAME_INFO["isPlayerOneTurn"] = false
+                        end
+                    end
+                end
+
+                -- Switch grids
+                self.widgets[1] = GameGrid(40, 70, self.cellSize, self.gridSize,
+                    GAME_INFO[opponent]["shipGrid"], nil)
+                self.widgets[2] = GameGrid(740 , 70, self.cellSize, self.gridSize,
+                    GAME_INFO[opponent]["hitGrid"], nil,
+                    function()
+                        self:fire()
+                    end)
+
+                -- Update text on screen
+                self.widgets[6] = Label((GAME_INFO["isPlayerOneTurn"] and "Player One's Turn") or "Player Two's Turn", 515, 10, 250,
+                        {1.0, 1.0, 1.0, 1.0}, "center")
+                self.widgets[7] = Label(
+                        "Previous shot was a " .. GAME_INFO[(GAME_INFO["isPlayerOneTurn"] and "playerOne") or "playerTwo"]["previousShot"],
+                        515, 40, 250, {1.0, 1.0, 1.0, 1.0}, "center")
             end,
             540, 648, 200, 50
         ),
@@ -47,6 +86,11 @@ function PlayScreen:new(color, bg_image)
         Label(
             (GAME_INFO["isPlayerOneTurn"] and "Player One's Turn") or "Player Two's Turn",
             515, 10, 250,
+            {1.0, 1.0, 1.0, 1.0}, "center"
+        ),
+        Label(
+            "Previous shot was a " .. GAME_INFO[(GAME_INFO["isPlayerOneTurn"] and "playerOne") or "playerTwo"]["previousShot"],
+            515, 40, 250,
             {1.0, 1.0, 1.0, 1.0}, "center"
         ),
         Button(
@@ -85,18 +129,34 @@ function PlayScreen:fire()
         opponent = "playerOne"
     end
 
+    if GAME_INFO["gamemode"] == "ComputerComputer"
+        or (not GAME_INFO["isPlayerOneTurn"] and GAME_INFO["gamemode"] == "PlayerComputer")
+    then
+        local aiSelection = AIFire(GAME_INFO[player]["hitGrid"], self.gridSize)
+        gGrid.selectedX = aiSelection[1]
+        gGrid.selectedY = aiSelection[2]
+    end
+
     if gGrid.selectedX ~= -1 and gGrid.selectedY ~= -1
-            and GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] ~= "h"
+        and GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] ~= "h"
     then
         self.fired = true
 
         GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] = "h"
-        GAME_INFO[opponent]["shipGrid"][gGrid.selectedY][gGrid.selectedX] = "h"
-        GAME_INFO[opponent]["health"] = GAME_INFO[opponent]["health"] - 1
 
-        if GAME_INFO[opponent]["health"] == 0 then
-            --[[Switch to ending screen]]
+        -- Subtract health from opponent if it is a hit
+        if GAME_INFO[opponent]["shipGrid"][gGrid.selectedY][gGrid.selectedX] ~= "~" then
+            GAME_INFO[opponent]["health"] = GAME_INFO[opponent]["health"] - 1
+            GAME_INFO[player]["previousShot"] = "hit"
+        else
+            GAME_INFO[player]["previousShot"] = "miss"
         end
+
+        GAME_INFO[opponent]["shipGrid"][gGrid.selectedY][gGrid.selectedX] = "h"
+    end
+
+    if GAME_INFO[opponent]["health"] == 0 then
+        --[[Switch to ending screen]]
     end
 end
 

@@ -14,7 +14,8 @@ local GameInfo = {
     },
     ["shipGrid"] = makeGrid(10, 10, "~"),
     ["hitGrid"] = makeGrid(10, 10, "~"),
-    ["health"] = 17
+    ["health"] = 17,
+    ["previousShot"] = "miss"  -- Result of previous shot
   },
   ["playerTwo"] = {
     ["ships"] = {
@@ -26,7 +27,8 @@ local GameInfo = {
     },
     ["shipGrid"] = makeGrid(10, 10, "~"),
     ["hitGrid"] = makeGrid(10, 10, "~"),
-    ["health"] = 17
+    ["health"] = 17,
+    ["previousShot"] = "miss"  -- Result of previous shot
   },
 }
 

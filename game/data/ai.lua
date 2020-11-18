@@ -11,9 +11,9 @@ function AIPlaceShips(playerStr, gridSize)
     while shipProgress < 6 do
         local selectedShip = widgetTable[shipProgress]
 
-        --randomly assigns the posistion of each ship
-        local selectedX = love.math.random(1,10)
-        local selectedY = love.math.random(1,10)
+        --randomly assigns the position of each ship
+        local selectedX = love.math.random(1,gridSize)
+        local selectedY = love.math.random(1,gridSize)
 
         --randomly assigns the rotation of each ship
         local rotation = love.math.random(1,2)
@@ -48,4 +48,28 @@ function AIPlaceShips(playerStr, gridSize)
     -- Clears selected box on grid
     selectedX = -1
     selectedY = -1
+end
+
+function AIFire(hitGrid, gridSize)
+    if GAME_INFO["isAiHardmode"] then
+        return AIHardFire(hitGrid, gridSize)
+    else
+        return AIEasyFire(hitGrid, gridSize)
+    end
+end
+
+function AIEasyFire(hitGrid, gridSize)
+    local selectedX = -1
+    local selectedY = -1
+
+    while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" do
+        selectedX = love.math.random(1,gridSize)
+        selectedY = love.math.random(1,gridSize)
+    end
+
+    return {selectedX, selectedY}
+end
+
+function AIHardFire(hitGrid, gridSize)
+
 end
