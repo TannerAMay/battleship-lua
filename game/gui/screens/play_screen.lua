@@ -26,12 +26,10 @@ function PlayScreen:new(color, bg_image)
                     return
                 end
 
-                local player = "playerOne"
                 local opponent = "playerTwo"
                 self.fired = false
 
                 if not self.player1 then
-                    player = "playerTwo"
                     opponent = "playerOne"
                     self.player1 = true
                 else
