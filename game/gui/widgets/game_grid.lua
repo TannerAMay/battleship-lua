@@ -78,6 +78,8 @@ function GameGrid:draw()
                 love.graphics.setColor(.960, .266, .972)
             elseif self.grid[y][x] == "h" then
                 love.graphics.setColor(.819, 0, 0)
+            elseif self.grid[y][x] == 'p' then
+                love.graphics.setColor(0,1,0)
             end
 
             -- Make the "pixel"

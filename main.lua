@@ -17,6 +17,7 @@ function love.load()
     require "game.gui.screens.placement_screen"
     require "game.gui.screens.screen_manager"
     require "game.gui.screens.play_screen"
+    require "game.gui.screens.ending_screen"
 
     require "game.gui.widgets.button"
     require "game.gui.widgets.game_grid"

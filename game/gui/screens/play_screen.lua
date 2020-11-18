@@ -9,6 +9,9 @@ function PlayScreen:new(color, bg_image)
     self.cellSize = 50
     self.gridSize = 10
 
+    self.lastX = nil
+    self.lastY = nil
+
     self.widgets = {
         GameGrid(
             40, 70, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["shipGrid"], nil
@@ -132,9 +135,11 @@ function PlayScreen:fire()
     if GAME_INFO["gamemode"] == "ComputerComputer"
         or (not GAME_INFO["isPlayerOneTurn"] and GAME_INFO["gamemode"] == "PlayerComputer")
     then
-        local aiSelection = AIFire(GAME_INFO[player]["hitGrid"], self.gridSize)
+        local aiSelection = AIFire(GAME_INFO[player]["hitGrid"], self.gridSize, self.lastX, self.lastY)
         gGrid.selectedX = aiSelection[1]
         gGrid.selectedY = aiSelection[2]
+        self.lastX = aiSelection[3]
+        self.lastY = aiSelection[4]
     end
 
     if gGrid.selectedX ~= -1 and gGrid.selectedY ~= -1
@@ -148,6 +153,7 @@ function PlayScreen:fire()
         if GAME_INFO[opponent]["shipGrid"][gGrid.selectedY][gGrid.selectedX] ~= "~" then
             GAME_INFO[opponent]["health"] = GAME_INFO[opponent]["health"] - 1
             GAME_INFO[player]["previousShot"] = "hit"
+            GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] = "p"
         else
             GAME_INFO[player]["previousShot"] = "miss"
         end
@@ -156,7 +162,7 @@ function PlayScreen:fire()
     end
 
     if GAME_INFO[opponent]["health"] == 0 then
-        --[[Switch to ending screen]]
+        SCREEN_MAN:changeScreen("ending")
     end
 end
 
