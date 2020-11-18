@@ -10,7 +10,6 @@ function love.load()
     Object = require "libraries.classic.classic"
     
     require "game.gui.screens.base_screen"
-    require "game.gui.screens.game_screen"
     require "game.gui.screens.pause_screen"
     require "game.gui.screens.setup_screen"
     require "game.gui.screens.title_screen"
