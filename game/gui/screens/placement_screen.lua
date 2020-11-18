@@ -3,7 +3,7 @@
 PlacementScreen = BaseScreen:extend()
 
 function PlacementScreen:new(gridx, gridy)
-    PlacementScreen.super.new(self, {0.0, 0.0, 0.0, 1.0}, nil)
+    PlacementScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
     self.cellSize = 50
     self.gridSize = 10
@@ -34,7 +34,7 @@ function PlacementScreen:new(gridx, gridy)
                 self.selectedShip = "c"
                 self:updateShipButtonColor(1)
             end,
-            645, 25, 150, 40  -- x, y, width, height
+            230, 70, 150, 40  -- x, y, width, height
         ),
         Button(
             "Battleship (4)",
@@ -42,7 +42,7 @@ function PlacementScreen:new(gridx, gridy)
                 self.selectedShip = "b"
                 self:updateShipButtonColor(2)
             end,
-            645, 70, 150, 40  -- x, y, width, height
+            230, 115, 150, 40  -- x, y, width, height
         ),
         Button(
             "Cruiser (3)",
@@ -50,7 +50,7 @@ function PlacementScreen:new(gridx, gridy)
                 self.selectedShip = "r"
                 self:updateShipButtonColor(3)
             end,
-            645, 115, 150, 40  -- x, y, width, height
+            230, 160, 150, 40  -- x, y, width, height
         ),
         Button(
             "Submarine (3)",
@@ -58,7 +58,7 @@ function PlacementScreen:new(gridx, gridy)
                 self.selectedShip = "s" 
                 self:updateShipButtonColor(4)
             end,
-            645, 160, 150, 40  -- x, y, width, height
+            230, 205, 150, 40  -- x, y, width, height
         ),
         Button(
             "Destroyer (2)",
@@ -66,7 +66,7 @@ function PlacementScreen:new(gridx, gridy)
                 self.selectedShip = "d"
                 self:updateShipButtonColor(5)
             end,
-            645, 205, 150, 40  -- x, y, width, height
+            230, 250, 150, 40  -- x, y, width, height
         ),
         Button(
             "Rotate",
@@ -76,7 +76,7 @@ function PlacementScreen:new(gridx, gridy)
                     rotateSwitch()
                 end
             end,
-            645, 250, 150, 40  -- x, y, width, height
+            900, 70, 150, 40  -- x, y, width, height
         ),
         Button(
             "Remove",
@@ -95,30 +95,30 @@ function PlacementScreen:new(gridx, gridy)
                     end
                 end
             end,
-            645, 295, 150, 40  -- x, y, width, height
+            900, 115, 150, 40  -- x, y, width, height
         ),
         Label(
             "V",
-            625, 25, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            125, 25, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
         Label(
             "V",
-            625, 70, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            125, 70, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
         Label(
             "V",
-            625, 115, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            125, 115, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
         Label(
             "V",
-            625, 160, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            125, 160, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
         Label(
             "V",
-            625, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            125, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
         GameGrid(
-            0 ,0, self.cellSize, self.gridSize, self:getGrid(), nil,
+            390 ,70, self.cellSize, self.gridSize, self:getGrid(), nil,
             function()
                 self:newPlaceShip()
             end
@@ -135,11 +135,11 @@ function PlacementScreen:new(gridx, gridy)
 
                 SCREEN_MAN:changeScreen("play")
             end,
-            645, 340, 150, 40  -- x, y, width, height
+            900, 160, 150, 40  -- x, y, width, height
         ),
         Label(
           "Player One",
-          220, 520, 100,
+          540, 20, 200,
           {1.0, 1.0, 1.0, 1.0}, "center"
         ),
         Button(
@@ -147,14 +147,14 @@ function PlacementScreen:new(gridx, gridy)
           function()
             self:changePlayer()
           end,
-          340, 520, 20, 50
+          740, 10, 20, 50
         ),
         Button(
           "<",
           function()
             self:changePlayer()
           end,
-          180, 520, 20, 50
+          520, 10, 20, 50
         )
     }
 end

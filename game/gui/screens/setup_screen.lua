@@ -1,7 +1,7 @@
 SetupScreen = BaseScreen:extend()
 
 function SetupScreen:new()
-    SetupScreen.super.new(self, {.3, .3, .5, 1.0}, nil)
+    SetupScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
     self.widgets = {
         Button(
@@ -9,58 +9,21 @@ function SetupScreen:new()
             function()
                 SCREEN_MAN:changeScreen("title")
             end,
-            2, 548, 200, 50
-        ),
-        Label(
-            "Difficulty:",
-            0, 0, 100, {1.0, 1.0, 1.0, 1.0}, "left"
-        ),
-        Label(
-            "",
-            100, 0, 100, {1.0, 1.0, 1.0, 1.0}, "left"
-        ),
-        Label(
-            "Gamemode:",
-            440, 0, 200, {1.0, 1.0, 1.0, 1.0}, "left"
-        ),
-        Label(
-            "",
-            565, 0, 200, {1.0, 1.0, 1.0, 1.0}, "left"
+            540, 548, 200, 50
         ),
         Button(
-            "Player vs Player",
+            "Gamemode: Player vs Computer",
             function()
-                self:changeMode("PlayerPlayer")
+                return
             end,
-            440, 25, 300, 40
+            440, 250, 400, 40
         ),
         Button(
-            "Player vs Computer",
+            "Difficulty: Easy",
             function()
-                self:changeMode("PlayerComputer")
+                return
             end,
-            440, 70, 300, 40
-        ),
-        Button(
-            "Computer vs Computer",
-            function()
-                self:changeMode("ComputerComputer")
-            end,
-            440, 115, 300, 40
-        ),
-        Button(
-            "Easy",
-            function()
-                self:changeDiff(false)
-            end,
-            2, 25, 150, 40
-        ),
-        Button(
-            "Hard",
-            function()
-                self:changeDiff(true)
-            end,
-            2, 70, 150, 40
+            490, 200, 300, 40
         ),
         Button(
             "Start",
@@ -69,8 +32,37 @@ function SetupScreen:new()
                 GAME_INFO["gamemode"] = self.gamemode
                 SCREEN_MAN:changeScreen("placement")
             end,
-            440, 548, 150, 40
-        )
+            565, 350, 150, 40
+        ),
+        Button(
+            ">",
+            function()
+                self:changeDiff(true)
+            end,
+            795, 200, 50, 40
+        ),
+        Button(
+            "<",
+            function()
+                self:changeDiff(false)
+            end,
+            435, 200, 50, 40
+        ),
+        Button(
+            ">",
+            function()
+                self:changeMode("ComputerComputer")
+            end,
+            845, 250, 50, 40
+        ),
+        Button(
+            "<",
+            function()
+                self:changeMode("PlayerPlayer")
+            end,
+            385, 250, 50, 40
+        ),
+        Label("Game Settings",565, 150, 150, {1.0, 1.0, 1.0, 1.0}, "left")
     }
 
     self.gamemode = "none"
@@ -84,22 +76,47 @@ function SetupScreen:changeDiff(is_hard)
     self.hard_mode = is_hard
     if (self.hard_mode)
     then
-        self.widgets[3].text = "Hard"
+        self.widgets[3].text = "Difficulty: Hard"
+        self.widgets[5].enabled = false
+        self.widgets[6].enabled = true
     else
-        self.widgets[3].text = "Easy"
+        self.widgets[3].text = "Difficulty: Easy"
+        self.widgets[5].enabled = true
+        self.widgets[6].enabled = false
     end
 end
 
 function SetupScreen:changeMode(new_mode)
     self.gamemode = new_mode
-    self.widgets[5].text = self.gamemode
 
     if (self.gamemode == "PlayerPlayer")
     then
-        self.widgets[9].enabled = false
-        self.widgets[10].enabled = false
+        self.widgets[3].enabled = false
+        self.widgets[5].enabled = false
+        self.widgets[6].enabled = false
+        self.widgets[8].enabled = false
+        self.widgets[7].on_click = function() self:changeMode("PlayerComputer") end
+        self.widgets[2].text = "Gamemode: Player vs Player"
     else
-        self.widgets[9].enabled = true
-        self.widgets[10].enabled = true
+        self.widgets[3].enabled = true
+        if self.hard_mode == true then
+            self.widgets[6].enabled = true
+        else
+            self.widgets[5].enabled = true
+        end
+        if (self.gamemode == "PlayerComputer") then
+            self.widgets[7].enabled = true
+            self.widgets[8].enabled = true
+            self.widgets[8].on_click = function() self:changeMode("PlayerPlayer") end
+            self.widgets[7].on_click = function() self:changeMode("ComputerComputer") end
+            self.widgets[2].text = "Gamemode: Player vs Computer"
+        else
+            self.widgets[7].enabled = false
+            self.widgets[8].enabled = true
+            self.widgets[8].on_click = function() self:changeMode("PlayerComputer") end
+            self.widgets[2].text = "Gamemode: Computer vs Computer"
+        end
+
+
     end
 end

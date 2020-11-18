@@ -1,14 +1,14 @@
 TitleScreen = BaseScreen:extend()
 
 function TitleScreen:new()
-    TitleScreen.super.new(self)
+    TitleScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
     self.widgets = {
         Button("New Game",
         function()
           SCREEN_MAN:changeScreen("setup")
         end,
-        20, 20, 200, 100),
+        540, 140, 200, 100),
         Button("Load Game",
         function()
           local error = loadGame()
@@ -18,13 +18,13 @@ function TitleScreen:new()
             SCREEN_MAN:changeScreen("play")
           end
         end,
-        20, 140, 200, 100),
+        540, 260, 200, 100),
         Button("Exit Game",
         function()
           love.event.push('quit')
         end,
-        20, 260, 200, 100),
-        Label("Load failed.", 20, 380, 100, nil, "left")
+        540, 380, 200, 100),
+        Label("Load failed.", 540, 380, 100, {1.0, 1.0, 1.0, 1.0}, "left")
     }
 
     self.widgets[4].visible = false
