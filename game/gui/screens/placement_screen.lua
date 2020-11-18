@@ -126,7 +126,7 @@ function PlacementScreen:new(gridx, gridy)
         Button(
             "Start Game",
             function()
-                SCREEN_MAN:changeScreen("game")
+                SCREEN_MAN:changeScreen("play")
             end,
             645, 340, 150, 40  -- x, y, width, height
         ),

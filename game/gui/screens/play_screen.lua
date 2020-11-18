@@ -3,19 +3,40 @@ PlayScreen = BaseScreen:extend()
 function PlayScreen:new(color, bg_image)
     PlayScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
+    self.player1 = true
+
     self.cellSize = 50
     self.gridSize = 10
 
-    
     self.widgets = {
         GameGrid(
             0, 0, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["shipGrid"], nil
         ),
         GameGrid(
-            600 , 0, self.cellSize, self.gridSize, GAME_INFO["playerTwo"]["shipGrid"], nil
+            600 , 0, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["hitGrid"], nil
         ),
+        Button(
+            "Finish turn",
+            function()
+                if self.player1 then
+                    self.widgets[1] = GameGrid(0, 0, self.cellSize, self.gridSize,
+                            GAME_INFO["playerTwo"]["shipGrid"], nil)
+                    self.widgets[2] = GameGrid(600 , 0, self.cellSize, self.gridSize,
+                            GAME_INFO["playerTwo"]["hitGrid"], nil)
+                    self.player1 = false
+                else
+                    self.widgets[1] = GameGrid(0, 0, self.cellSize, self.gridSize,
+                            GAME_INFO["playerOne"]["shipGrid"], nil)
+                    self.widgets[2] = GameGrid(600 , 0, self.cellSize, self.gridSize,
+                            GAME_INFO["playerOne"]["hitGrid"], nil)
+                    self.player1 = true
+                end
+
+            end,
+            300, 548, 200, 50
+        )
     }
-end 
+end
 
 function PlayScreen:load()
     missed = love.graphics.newImage('game/overlays/miss.png')
