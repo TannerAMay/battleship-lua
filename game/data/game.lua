@@ -11,8 +11,9 @@ local GameInfo = {
       ["s"] = Submarine(-1, -1),
       ["d"] = Destroyer(-1, -1)
     },
-    ["shipGrid"] = makeGrid(10, 10, "~"),
-    ["hitGrid"] = makeGrid(10, 10, "~")
+  ["shipGrid"] = makeGrid(10, 10, "~"),
+  ["hitGrid"] = makeGrid(10, 10, "~"),
+  ["health"] = 17
   },
   ["playerTwo"] = {
     ["ships"] = {
@@ -22,8 +23,9 @@ local GameInfo = {
       ["s"] = Submarine(-1, -1),
       ["d"] = Destroyer(-1, -1)
     },
-    ["shipGrid"] = makeGrid(10, 10, "~"),
-    ["hitGrid"] = makeGrid(10, 10, "~")
+  ["shipGrid"] = makeGrid(10, 10, "~"),
+  ["hitGrid"] = makeGrid(10, 10, "~"),
+  ["health"] = 17
   },
 }
 

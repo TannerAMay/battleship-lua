@@ -4,48 +4,95 @@ function PlayScreen:new(color, bg_image)
     PlayScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
     self.player1 = true
+    self.fired = false
 
     self.cellSize = 50
     self.gridSize = 10
 
     self.widgets = {
         GameGrid(
-            40, 40, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["shipGrid"], nil
+            40, 70, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["shipGrid"], nil
         ),
         GameGrid(
-            740 , 40, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["hitGrid"], nil
+            740 , 70, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["hitGrid"], nil,
+            function()
+                self:fire()
+            end
         ),
         Button(
             "Finish turn",
             function()
-                if self.player1 then
-                    self.widgets[1] = GameGrid(40, 40, self.cellSize, self.gridSize,
-                            GAME_INFO["playerTwo"]["shipGrid"], nil)
-                    self.widgets[2] = GameGrid(740 , 40, self.cellSize, self.gridSize,
-                            GAME_INFO["playerTwo"]["hitGrid"], nil)
-                    self.player1 = false
-                else
-                    self.widgets[1] = GameGrid(40, 40, self.cellSize, self.gridSize,
-                            GAME_INFO["playerOne"]["shipGrid"], nil)
-                    self.widgets[2] = GameGrid(740 , 40, self.cellSize, self.gridSize,
-                            GAME_INFO["playerOne"]["hitGrid"], nil)
-                    self.player1 = true
+                if not self.fired then
+                    return
                 end
 
+                local player = "playerOne"
+                local opponent = "playerTwo"
+                self.fired = false
+
+                if not self.player1 then
+                    player = "playerTwo"
+                    opponent = "playerOne"
+                    self.player1 = true
+                else
+                    self.player1 = false
+                end
+
+                self.widgets[1] = GameGrid(40, 70, self.cellSize, self.gridSize,
+                    GAME_INFO[opponent]["shipGrid"], nil)
+                self.widgets[2] = GameGrid(740 , 70, self.cellSize, self.gridSize,
+                    GAME_INFO[opponent]["hitGrid"], nil,
+                    function()
+                        self:fire()
+                    end)
             end,
             540, 648, 200, 50
         ),
         Label(
             "Your ships:",
-            190, 10, 200,
+            190, 40, 200,
             {1.0, 1.0, 1.0, 1.0}, "center"
         ),
         Label(
             "Your shots:",
-            895, 10, 200,
+            895, 40, 200,
+            {1.0, 1.0, 1.0, 1.0}, "center"
+        ),
+        Label(
+            (self.player1 and "Player One's Turn") or "Player Two's Turn",
+            515, 10, 250,
             {1.0, 1.0, 1.0, 1.0}, "center"
         )
     }
+end
+
+function PlayScreen:fire()
+    if self.fired then
+        return
+    end
+
+    local gGrid = self.widgets[2]
+    local player = "playerOne"
+    local opponent = "playerTwo"
+
+    if not self.player1 then
+        player = "playerTwo"
+        opponent = "playerOne"
+    end
+
+    if gGrid.selectedX ~= -1 and gGrid.selectedY ~= -1
+            and GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] ~= "h"
+    then
+        self.fired = true
+
+        GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] = "h"
+        GAME_INFO[opponent]["shipGrid"][gGrid.selectedY][gGrid.selectedX] = "h"
+        GAME_INFO[opponent]["health"] = GAME_INFO[opponent]["health"] - 1
+
+        if GAME_INFO[opponent]["health"] == 0 then
+            --[[Switch to ending screen]]
+        end
+    end
 end
 
 function PlayScreen:load()
