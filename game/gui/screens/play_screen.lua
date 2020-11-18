@@ -3,7 +3,7 @@ PlayScreen = BaseScreen:extend()
 function PlayScreen:new(color, bg_image)
     PlayScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
-    self.player1 = true
+    GAME_INFO["isPlayerOneTurn"] = true
     self.fired = false
 
     self.cellSize = 50
@@ -30,27 +30,27 @@ function PlayScreen:new(color, bg_image)
                 self.fired = false
 
                 --  Switch players
-                if not self.player1 then
+                if not GAME_INFO["isPlayerOneTurn"] then
                     opponent = "playerOne"
-                    self.player1 = true
+                    GAME_INFO["isPlayerOneTurn"] = true
                 else
-                    self.player1 = false
+                    GAME_INFO["isPlayerOneTurn"] = false
                 end
 
                 -- Make AI Shoot
                 if GAME_INFO["gamemode"] == "ComputerComputer"
-                    or (not self.player1 and GAME_INFO["gamemode"] == "PlayerComputer")
+                    or (not GAME_INFO["isPlayerOneTurn"] and GAME_INFO["gamemode"] == "PlayerComputer")
                 then
                     self:fire()
                     self.fired = false
 
                     -- Do not switch to opponent AI grid if human vs comp
                     if GAME_INFO["gamemode"] ~= "ComputerComputer" then
-                        if not self.player1 then
+                        if not GAME_INFO["isPlayerOneTurn"] then
                             opponent = "playerOne"
-                            self.player1 = true
+                            GAME_INFO["isPlayerOneTurn"] = true
                         else
-                            self.player1 = false
+                            GAME_INFO["isPlayerOneTurn"] = false
                         end
                     end
                 end
@@ -65,11 +65,11 @@ function PlayScreen:new(color, bg_image)
                     end)
 
                 -- Update text on screen
-                self.widgets[6] = Label((self.player1 and "Player One's Turn") or "Player Two's Turn", 515, 10, 250,
+                self.widgets[6] = Label((GAME_INFO["isPlayerOneTurn"] and "Player One's Turn") or "Player Two's Turn", 515, 10, 250,
                         {1.0, 1.0, 1.0, 1.0}, "center")
                 self.widgets[7] = Label(
-                        "Previous shot was a " .. GAME_INFO[(self.player1 and "playerOne") or "playerTwo"]["previousShot"],
-                        515, 610, 250, {1.0, 1.0, 1.0, 1.0}, "center")
+                        "Previous shot was a " .. GAME_INFO[(GAME_INFO["isPlayerOneTurn"] and "playerOne") or "playerTwo"]["previousShot"],
+                        515, 40, 250, {1.0, 1.0, 1.0, 1.0}, "center")
             end,
             540, 648, 200, 50
         ),
@@ -84,16 +84,35 @@ function PlayScreen:new(color, bg_image)
             {1.0, 1.0, 1.0, 1.0}, "center"
         ),
         Label(
-            (self.player1 and "Player One's Turn") or "Player Two's Turn",
+            (GAME_INFO["isPlayerOneTurn"] and "Player One's Turn") or "Player Two's Turn",
             515, 10, 250,
             {1.0, 1.0, 1.0, 1.0}, "center"
         ),
         Label(
-            "Previous shot was a " .. GAME_INFO[(self.player1 and "playerOne") or "playerTwo"]["previousShot"],
-            515, 610, 250,
+            "Previous shot was a " .. GAME_INFO[(GAME_INFO["isPlayerOneTurn"] and "playerOne") or "playerTwo"]["previousShot"],
+            515, 40, 250,
             {1.0, 1.0, 1.0, 1.0}, "center"
+        ),
+        Button(
+          "Save game",
+          function()
+            saveGame() -- TODO Add the error checking here.
+          end,
+          540, 588, 200, 50
         )
     }
+end
+
+function PlayScreen:reset()
+  local player = GAME_INFO["isPlayerOneTurn"] and "playerOne" or "playerTwo"
+  self.widgets[1].grid = GAME_INFO[player]["shipGrid"]
+  self.widgets[2].grid = GAME_INFO[player]["hitGrid"]
+end
+
+function PlayScreen:swapToOpponent()
+  local opponent = GAME_INFO["isPlayerOneTurn"] and "playerTwo" or "playerOne"
+  self.widgets[1].grid = GAME_INFO[opponent]["shipGrid"]
+  self.widgets[2].grid = GAME_INFO[opponent]["hitGrid"]
 end
 
 function PlayScreen:fire()
@@ -105,13 +124,13 @@ function PlayScreen:fire()
     local player = "playerOne"
     local opponent = "playerTwo"
 
-    if not self.player1 then
+    if not GAME_INFO["isPlayerOneTurn"] then
         player = "playerTwo"
         opponent = "playerOne"
     end
 
     if GAME_INFO["gamemode"] == "ComputerComputer"
-        or (not self.player1 and GAME_INFO["gamemode"] == "PlayerComputer")
+        or (not GAME_INFO["isPlayerOneTurn"] and GAME_INFO["gamemode"] == "PlayerComputer")
     then
         local aiSelection = AIFire(GAME_INFO[player]["hitGrid"], self.gridSize)
         gGrid.selectedX = aiSelection[1]
