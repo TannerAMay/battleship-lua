@@ -196,27 +196,39 @@ function PlacementScreen:newPlaceShip()
         end
     end
 
-    if self.numberPlaced == 5 then
+    if self.numberPlaced == 5 and GAME_INFO["gamemode"] == "PlayerComputer" then
+        self.widgets[14].enabled = true
+    elseif self.numberPlaced == 10 and GAME_INFO["gamemode"] == "PlayerPlayer" then
         self.widgets[14].enabled = true
     end
 end
 
 function PlacementScreen:reset()
-  if GAME_INFO["gamemode"] ~= "PlayerPlayer" then
-    self.widgets[16].visible = false
-    self.widgets[16].enabled = false
+    if GAME_INFO["gamemode"] ~= "PlayerPlayer" then
+        self.widgets[16].visible = false
+        self.widgets[16].enabled = false
 
-    self.widgets[17].visible = false
-    self.widgets[17].enabled = false
+        self.widgets[17].visible = false
+        self.widgets[17].enabled = false
+        if GAME_INFO["gamemode"] == "PlayerComputer" then
+            self.widgets[14].enabled = false
+        else
+            for i = 1, 7 do
+                self.widgets[i].enabled = false
+            end
+        end
+    else
+        self.widgets[16].visible = true
+        self.widgets[16].enabled = true
 
-    self.widgets[14].enabled = false
-  else
-    self.widgets[16].visible = true
-    self.widgets[16].enabled = true
+        self.widgets[17].visible = true
+        self.widgets[17].enabled = true
 
-    self.widgets[17].visible = true
-    self.widgets[17].enabled = true
-  end
+        self.widgets[14].enabled = false
+
+        
+    end
+
 end
 
 function PlacementScreen:update()
