@@ -10,30 +10,40 @@ function PlayScreen:new(color, bg_image)
 
     self.widgets = {
         GameGrid(
-            0, 0, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["shipGrid"], nil
+            40, 40, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["shipGrid"], nil
         ),
         GameGrid(
-            600 , 0, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["hitGrid"], nil
+            740 , 40, self.cellSize, self.gridSize, GAME_INFO["playerOne"]["hitGrid"], nil
         ),
         Button(
             "Finish turn",
             function()
                 if self.player1 then
-                    self.widgets[1] = GameGrid(0, 0, self.cellSize, self.gridSize,
+                    self.widgets[1] = GameGrid(40, 40, self.cellSize, self.gridSize,
                             GAME_INFO["playerTwo"]["shipGrid"], nil)
-                    self.widgets[2] = GameGrid(600 , 0, self.cellSize, self.gridSize,
+                    self.widgets[2] = GameGrid(740 , 40, self.cellSize, self.gridSize,
                             GAME_INFO["playerTwo"]["hitGrid"], nil)
                     self.player1 = false
                 else
-                    self.widgets[1] = GameGrid(0, 0, self.cellSize, self.gridSize,
+                    self.widgets[1] = GameGrid(40, 40, self.cellSize, self.gridSize,
                             GAME_INFO["playerOne"]["shipGrid"], nil)
-                    self.widgets[2] = GameGrid(600 , 0, self.cellSize, self.gridSize,
+                    self.widgets[2] = GameGrid(740 , 40, self.cellSize, self.gridSize,
                             GAME_INFO["playerOne"]["hitGrid"], nil)
                     self.player1 = true
                 end
 
             end,
-            300, 548, 200, 50
+            540, 648, 200, 50
+        ),
+        Label(
+            "Your ships:",
+            190, 10, 200,
+            {1.0, 1.0, 1.0, 1.0}, "center"
+        ),
+        Label(
+            "Your shots:",
+            895, 10, 200,
+            {1.0, 1.0, 1.0, 1.0}, "center"
         )
     }
 end
