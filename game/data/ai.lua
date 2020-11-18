@@ -50,9 +50,9 @@ function AIPlaceShips(playerStr, gridSize)
     selectedY = -1
 end
 
-function AIFire(hitGrid, gridSize, lastX, lastY)
+function AIFire(hitGrid, gridSize, lastX, lastY, hasHit)
     if GAME_INFO["isAiHardmode"] then
-        return AIHardFire(hitGrid, gridSize, lastX, lastY)
+        return AIHardFire(hitGrid, gridSize, lastX, lastY, hasHit)
     else
         return AIEasyFire(hitGrid, gridSize)
     end
@@ -62,7 +62,7 @@ function AIEasyFire(hitGrid, gridSize)
     local selectedX = -1
     local selectedY = -1
 
-    while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" do
+    while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" or hitGrid[selectedY][selectedX] == "p" do
         selectedX = love.math.random(1,gridSize)
         selectedY = love.math.random(1,gridSize)
     end
@@ -70,8 +70,10 @@ function AIEasyFire(hitGrid, gridSize)
     return {selectedX, selectedY}
 end
 
-function AIHardFire(hitGrid, gridSize, lastX, lastY)
-    if GAME_INFO["playerTwo"]["previousShot"] == "miss" then
+function AIHardFire(hitGrid, gridSize, lastX, lastY, hasHit)
+
+    --Random until the AI gets its first hit
+    if GAME_INFO["playerTwo"]["previousShot"] == "miss" and hasHit == false then
         local selectedX = -1
         local selectedY = -1
 
@@ -84,7 +86,7 @@ function AIHardFire(hitGrid, gridSize, lastX, lastY)
         lastX = selectedX
         lastY = selectedY
         return {selectedX, selectedY, lastX, lastY}
-    else
+    else --Shoots around last hit until it can longer do so, then moves back into random until next hit
         local selectedX = -1
         local selectedX = -1
         local tries = 0

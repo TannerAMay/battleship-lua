@@ -9,8 +9,13 @@ function PlayScreen:new(color, bg_image)
     self.cellSize = 50
     self.gridSize = 10
 
+    -- Variables used to keep track of when the AI has hit/missed
+    -- Used with the Hard AI to keep track where to shoot next
     self.lastX = nil
     self.lastY = nil
+    self.repeatX = nil
+    self.repeatY = nil
+    self.hasHit = false
 
     self.widgets = {
         GameGrid(
@@ -103,14 +108,14 @@ function PlayScreen:new(color, bg_image)
           end,
           540, 588, 200, 50
         ),
-        Button(
+        --[[Button(
             "Skip to ending screen",
             function()
                 GAME_INFO["playerTwo"]["health"] = 0
                 SCREEN_MAN:changeScreen("ending")
             end,
             740,588,200,50
-        )
+        )]]
     }
 end
 
@@ -143,7 +148,7 @@ function PlayScreen:fire()
     if GAME_INFO["gamemode"] == "ComputerComputer"
         or (not GAME_INFO["isPlayerOneTurn"] and GAME_INFO["gamemode"] == "PlayerComputer")
     then
-        local aiSelection = AIFire(GAME_INFO[player]["hitGrid"], self.gridSize, self.lastX, self.lastY)
+        local aiSelection = AIFire(GAME_INFO[player]["hitGrid"], self.gridSize, self.lastX, self.lastY, self.hasHit)
         gGrid.selectedX = aiSelection[1]
         gGrid.selectedY = aiSelection[2]
         self.lastX = aiSelection[3]
@@ -162,8 +167,15 @@ function PlayScreen:fire()
             GAME_INFO[opponent]["health"] = GAME_INFO[opponent]["health"] - 1
             GAME_INFO[player]["previousShot"] = "hit"
             GAME_INFO[player]["hitGrid"][gGrid.selectedY][gGrid.selectedX] = "p"
+            self.repeatX = self.lastX
+            self.repeatY = self.lastY
+            self.hasHit = true
+            --print("Last Hit: ", self.repeatX, " ",self.repeatY)
         else
             GAME_INFO[player]["previousShot"] = "miss"
+            self.lastX = self.repeatX
+            self.lastY = self.repeatY
+            --print("Last Hit: ", self.repeatX, " ",self.repeatY)
         end
 
         GAME_INFO[opponent]["shipGrid"][gGrid.selectedY][gGrid.selectedX] = "h"

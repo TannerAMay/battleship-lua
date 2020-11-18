@@ -4,13 +4,13 @@ function EndingScreen:new(color, bg_image)
     EndingScreen.super.new(self, {.3, .5, .3, 1.0}, nil)
 
     self.widgets = {
-        Label("Congrats", 0,0,900,{1.0, 1.0, 1.0, 1.0}, "center"),
+        Label("Congrats", 0,200,1280,{1.0, 1.0, 1.0, 1.0}, "center"),
         Button(
             "New Game",
             function()
                 SCREEN_MAN:changeScreen("setup")
             end,
-            540, 140, 200, 100
+            540, 275, 200, 100
         )
     }
 end
