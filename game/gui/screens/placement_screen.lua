@@ -126,6 +126,13 @@ function PlacementScreen:new(gridx, gridy)
         Button(
             "Start Game",
             function()
+                if GAME_INFO["gamemode"] == "PlayerComputer" then
+                    AIPlaceShips("playerTwo", self.gridSize)
+                elseif GAME_INFO["gamemode"] == "ComputerComputer" then
+                    AIPlaceShips("playerOne", self.gridSize)
+                    AIPlaceShips("playerTwo", self.gridSize)
+                end
+
                 SCREEN_MAN:changeScreen("play")
             end,
             645, 340, 150, 40  -- x, y, width, height

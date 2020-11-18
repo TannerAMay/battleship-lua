@@ -1,6 +1,6 @@
 -- This is a table because lume can serialize these easily.
 local GameInfo = {
-  ["gamemode"] = "PlayerComputer",
+  ["gamemode"] = "PlayerPlayer",
   ["isAiHardmode"] = false,
   ["isInGame"] = false,
   ["playerOne"] = {
@@ -11,9 +11,9 @@ local GameInfo = {
       ["s"] = Submarine(-1, -1),
       ["d"] = Destroyer(-1, -1)
     },
-  ["shipGrid"] = makeGrid(10, 10, "~"),
-  ["hitGrid"] = makeGrid(10, 10, "~"),
-  ["health"] = 17
+    ["shipGrid"] = makeGrid(10, 10, "~"),
+    ["hitGrid"] = makeGrid(10, 10, "~"),
+    ["health"] = 17
   },
   ["playerTwo"] = {
     ["ships"] = {
@@ -23,9 +23,9 @@ local GameInfo = {
       ["s"] = Submarine(-1, -1),
       ["d"] = Destroyer(-1, -1)
     },
-  ["shipGrid"] = makeGrid(10, 10, "~"),
-  ["hitGrid"] = makeGrid(10, 10, "~"),
-  ["health"] = 17
+    ["shipGrid"] = makeGrid(10, 10, "~"),
+    ["hitGrid"] = makeGrid(10, 10, "~"),
+    ["health"] = 17
   },
 }
 

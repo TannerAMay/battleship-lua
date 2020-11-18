@@ -5,7 +5,6 @@ function ScreenManager:new()
         ["title"] = TitleScreen(),
         ["setup"] = SetupScreen(),
         ["pause"] = PauseScreen(),
-        ["game"] = GameScreen(),
         ["placement"] = PlacementScreen(),
         ["play"] = PlayScreen()
     }
