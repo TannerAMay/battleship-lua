@@ -7,6 +7,8 @@ function PlacementScreen:new(gridx, gridy)
 
     self.cellSize = 50
     self.gridSize = 10
+    self.numberPlaced = 0
+    self.newSelect = false
 
     -- Checks if player one is the active player for placement screen
     self.isOneSelected = true
@@ -28,47 +30,52 @@ function PlacementScreen:new(gridx, gridy)
     end
 
     self.widgets = {
-        Button(
+        Button( --1
             "Carrier (5)",
             function()
                 self.selectedShip = "c"
                 self:updateShipButtonColor(1)
+                self.newSelect = true
             end,
             230, 70, 150, 40  -- x, y, width, height
         ),
-        Button(
+        Button( --2
             "Battleship (4)",
             function()
                 self.selectedShip = "b"
                 self:updateShipButtonColor(2)
+                self.newSelect = true
             end,
             230, 115, 150, 40  -- x, y, width, height
         ),
-        Button(
+        Button( --3
             "Cruiser (3)",
             function()
                 self.selectedShip = "r"
                 self:updateShipButtonColor(3)
+                self.newSelect = true
             end,
             230, 160, 150, 40  -- x, y, width, height
         ),
-        Button(
+        Button( --4
             "Submarine (3)",
             function()
                 self.selectedShip = "s" 
                 self:updateShipButtonColor(4)
+                self.newSelect = true
             end,
             230, 205, 150, 40  -- x, y, width, height
         ),
-        Button(
+        Button( --5
             "Destroyer (2)",
             function()
                 self.selectedShip = "d"
                 self:updateShipButtonColor(5)
+                self.newSelect = true
             end,
             230, 250, 150, 40  -- x, y, width, height
         ),
-        Button(
+        Button( --6
             "Rotate",
             function()
                 if self.selectedShip ~= "none" and self:getShips()[self.selectedShip].x == -1 then
@@ -78,7 +85,7 @@ function PlacementScreen:new(gridx, gridy)
             end,
             900, 70, 150, 40  -- x, y, width, height
         ),
-        Button(
+        Button( --7
             "Remove",
             function()
                 if self.selectedShip ~= "none" then
@@ -94,36 +101,43 @@ function PlacementScreen:new(gridx, gridy)
                         end
                     end
                 end
+                if self.numberPlaced > 0 and self.newSelect == true then
+                    self.numberPlaced = self.numberPlaced - 1
+                    self.widgets[14].enabled = false
+                    self.newSelect = false
+                    self.selectedShip = "none"
+                    self:updateShipButtonColor(self.selectedShip)
+                end
             end,
             900, 115, 150, 40  -- x, y, width, height
         ),
-        Label(
+        Label( --8
             "V",
-            125, 25, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            205, 70, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
-        Label(
+        Label( --9
             "V",
-            125, 70, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            205, 115, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
-        Label(
+        Label( --10
             "V",
-            125, 115, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            205, 160, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
-        Label(
+        Label( --11
             "V",
-            125, 160, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            205, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
-        Label(
+        Label( --12
             "V",
-            125, 205, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
+            205, 250, 25, {1.0, 1.0, 1.0, 1.0}, "left" -- x, y, width, color, align
         ),
-        GameGrid(
+        GameGrid( --13
             390 ,70, self.cellSize, self.gridSize, self:getGrid(), nil,
             function()
                 self:newPlaceShip()
             end
         ),
-        Button(
+        Button( --14
             "Start Game",
             function()
                 if GAME_INFO["gamemode"] == "PlayerComputer" then
@@ -137,19 +151,19 @@ function PlacementScreen:new(gridx, gridy)
             end,
             900, 160, 150, 40  -- x, y, width, height
         ),
-        Label(
+        Label( --15
           "Player One",
           540, 20, 200,
           {1.0, 1.0, 1.0, 1.0}, "center"
         ),
-        Button(
+        Button( --16
           ">",
           function()
             self:changePlayer()
           end,
           740, 10, 20, 50
         ),
-        Button(
+        Button( --17
           "<",
           function()
             self:changePlayer()
@@ -172,7 +186,7 @@ function PlacementScreen:newPlaceShip()
             -- Set x and y in ship object
             self:getShips()[self.selectedShip].x = gGrid.selectedX
             self:getShips()[self.selectedShip].y = gGrid.selectedY
-
+            self.numberPlaced = self.numberPlaced + 1
             -- Add ship to grid
             for l = 0, self:getShips()[self.selectedShip].length - 1 do
                 for w = 0, self:getShips()[self.selectedShip].width - 1 do
@@ -180,6 +194,10 @@ function PlacementScreen:newPlaceShip()
                 end
             end
         end
+    end
+
+    if self.numberPlaced == 5 then
+        self.widgets[14].enabled = true
     end
 end
 
@@ -190,6 +208,8 @@ function PlacementScreen:reset()
 
     self.widgets[17].visible = false
     self.widgets[17].enabled = false
+
+    self.widgets[14].enabled = false
   else
     self.widgets[16].visible = true
     self.widgets[16].enabled = true
@@ -221,7 +241,10 @@ end
         btnSelected - The index of the button that has a ship selected now. Should be [1-5]
 ]]
 function PlacementScreen:updateShipButtonColor(btnSelected)
-    if (self.selectedShip == nil) then -- No idea how this could happen, but just in case.
+    if (self.selectedShip == "none") then -- No idea how this could happen, but just in case.
+        for i=1, 5 do
+            self.widgets[i].color = {0.2, 0.2, 0.8, 1.0}
+        end
         return
     end
 
