@@ -15,7 +15,7 @@ function GameScreen:new(color, bg_image)
 
     self.widgets = {
         GameGrid(
-            0 ,0, self.cellSize, self.gridSize, self:getGrid(), nil,
+            0 , 0, self.cellSize, self.gridSize, self:getGrid(), nil,
             function()
                 print("Clicking Works")
             end
@@ -27,6 +27,13 @@ function GameScreen:new(color, bg_image)
             end,
             2, 548, 200, 50
         ),
+        Button(
+            "To Play Screen",
+            function()
+                SCREEN_MAN:changeScreen("play")
+            end,
+            300, 548, 200, 50
+        )
     }
     
     self.shipProgress = 1
@@ -92,16 +99,13 @@ end
 
 
 function GameScreen:update()
-    local mouseX = love.mouse.getX()
-    local mouseY = love.mouse.getY()
-
     local gGrid = self.widgets[1]
 end
 
 function GameScreen:getGrid()
-    return GAME_INFO["computer"]["shipGrid"]
+    return GAME_INFO["playerTwo"]["shipGrid"]
 end
 
 function GameScreen:getShips()
-    return GAME_INFO["computer"]["ships"]
+    return GAME_INFO["playerTwo"]["ships"]
   end
