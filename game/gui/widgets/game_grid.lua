@@ -29,7 +29,7 @@ function GameGrid:new(x, y, cellSize, gridSize, grid, hitGrid, onClick)
     self.selectedY = -1
 
     self.onClick = onClick or function () 
-        print(string.format("X:%d Y:%d", self.selectedX, self.selectedY)) 
+        print(string.format("X:%d Y:%d", self.selectedX, self.selectedY))
     end
 
     if (not self.grid) then
