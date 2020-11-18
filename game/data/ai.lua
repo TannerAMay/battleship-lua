@@ -50,9 +50,9 @@ function AIPlaceShips(playerStr, gridSize)
     selectedY = -1
 end
 
-function AIFire(hitGrid, gridSize)
+function AIFire(hitGrid, gridSize, lastX, lastY, hasHit)
     if GAME_INFO["isAiHardmode"] then
-        return AIHardFire(hitGrid, gridSize)
+        return AIHardFire(hitGrid, gridSize, lastX, lastY, hasHit)
     else
         return AIEasyFire(hitGrid, gridSize)
     end
@@ -62,7 +62,7 @@ function AIEasyFire(hitGrid, gridSize)
     local selectedX = -1
     local selectedY = -1
 
-    while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" do
+    while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" or hitGrid[selectedY][selectedX] == "p" do
         selectedX = love.math.random(1,gridSize)
         selectedY = love.math.random(1,gridSize)
     end
@@ -70,6 +70,58 @@ function AIEasyFire(hitGrid, gridSize)
     return {selectedX, selectedY}
 end
 
-function AIHardFire(hitGrid, gridSize)
+function AIHardFire(hitGrid, gridSize, lastX, lastY, hasHit)
+
+    --Random until the AI gets its first hit
+    if GAME_INFO["playerTwo"]["previousShot"] == "miss" and hasHit == false then
+        local selectedX = -1
+        local selectedY = -1
+
+        while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" or hitGrid[selectedY][selectedX] == "p" do
+            selectedX = love.math.random(1,gridSize)
+            selectedY = love.math.random(1,gridSize)
+        end
+
+        print(selectedX, selectedY)
+        lastX = selectedX
+        lastY = selectedY
+        return {selectedX, selectedY, lastX, lastY}
+    else --Shoots around last hit until it can longer do so, then moves back into random until next hit
+        local selectedX = -1
+        local selectedX = -1
+        local tries = 0
+
+        while (selectedX == -1 or hitGrid[selectedY][selectedX] == "h" or hitGrid[selectedY][selectedX] == "p") and tries < 4 do
+            local randomNum = love.math.random(1,4)
+            if randomNum == 1 and (lastX + 1 <= gridSize) then
+                selectedX = lastX + 1
+                selectedY = lastY
+            elseif randomNum == 2 and (lastX - 1 >= 1) then
+                selectedX = lastX - 1
+                selectedY = lastY
+            elseif randomNum == 3 and (lastY + 1 <= gridSize) then
+                selectedY = lastY + 1
+                selectedX = lastX
+            elseif randomNum == 4 and (selectedY - 1 >= 1) then
+                selectedY = lastY- 1
+                selectedX = lastX
+            end
+            tries = tries + 1
+        end
+
+        if tries == 4 then
+            while selectedX == -1 or hitGrid[selectedY][selectedX] == "h" or hitGrid[selectedY][selectedX] == "p" do
+                selectedX = love.math.random(1,gridSize)
+                selectedY = love.math.random(1,gridSize)
+            end
+        end
+
+        print(selectedX, selectedY)
+        lastX = selectedX
+        lastY = selectedY
+        return {selectedX, selectedY, lastX, lastY}
+    end
+
+
 
 end
